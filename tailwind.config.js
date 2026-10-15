@@ -8,16 +8,16 @@ export default {
     extend: {
       colors: {
         futura: {
-          bg: "#090A0C",
-          surface: "#101216",
-          card: "#171A20",
-          elevated: "#20242B",
-          text: "#F4F1EA",
-          muted: "#A2A5AC",
-          border: "#30343B",
-          gold: "#D5B477",
-          'gold-hover': "#E5C68A",
-          green: "#8BC6A1",
+          bg: "#08090B",
+          surface: "#15171C",
+          card: "#191C22",
+          elevated: "#20232A",
+          text: "#F5F3EF",
+          muted: "#A6AFBD",
+          border: "#30343C",
+          gold: "#E6C17D",
+          'gold-hover': "#F0D399",
+          green: "#80C9A0",
           coral: "#E27D78",
           silver: "#A9B8C8",
         }

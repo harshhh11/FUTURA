@@ -4,15 +4,15 @@
 
 @layer base {
   :root {
-    --bg-main: #07080A;
-    --bg-surface: #101216;
-    --bg-card: #171A20;
-    --bg-elevated: #20242B;
-    --text-primary: #F4F1EA;
-    --text-secondary: #A2A5AC;
-    --border-subtle: #30343B;
-    --accent-gold: #D5B477;
-    --accent-green: #8BC6A1;
+    --bg-main: #08090B;
+    --bg-surface: #15171C;
+    --bg-card: #191C22;
+    --bg-elevated: #20232A;
+    --text-primary: #F5F3EF;
+    --text-secondary: #A6AFBD;
+    --border-subtle: #30343C;
+    --accent-gold: #E6C17D;
+    --accent-green: #80C9A0;
     --accent-coral: #E27D78;
     --accent-silver: #A9B8C8;
     --sat: env(safe-area-inset-top, 0px);

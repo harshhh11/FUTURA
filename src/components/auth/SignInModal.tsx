@@ -70,13 +70,13 @@ export const SignInModal: React.FC = () => {
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fadeIn overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby="signin-modal-title"
     >
       <div 
-        className="w-full max-w-md bg-[#0F1116] border border-[#2D313B] rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col relative text-[#F4F1EA]"
+        className="w-full max-w-md bg-[#0F1116] border border-[#2D313B] rounded-2xl sm:rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col relative text-[#F4F1EA] my-auto max-h-[92dvh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Subtle Ambient Glow */}
@@ -173,7 +173,7 @@ export const SignInModal: React.FC = () => {
             <button
               type="button"
               onClick={handleDemoSignIn}
-              className="w-full py-2.5 px-3 rounded-xl bg-[#171A21] hover:bg-[#1E222B] border border-[#D5B477]/40 text-xs font-semibold text-[#D5B477] flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-sm group"
+              className="w-full py-2.5 px-3 min-h-[44px] rounded-xl bg-[#191C22] hover:bg-[#20232A] border border-[#E6C17D]/40 text-xs font-semibold text-[#E6C17D] flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-sm group"
             >
               <Sparkles className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
               <span>One-Click Sign In as Aarav (Demo)</span>
@@ -184,20 +184,20 @@ export const SignInModal: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 rounded-xl text-xs font-bold bg-gradient-to-r from-[#D5B477] to-[#E5C68A] text-[#090A0C] hover:shadow-subtle-glow hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-md disabled:opacity-50"
+            className="w-full py-3 min-h-[44px] rounded-xl text-xs font-bold bg-gradient-to-r from-[#E6C17D] to-[#F0D399] text-[#08090B] hover:shadow-subtle-glow hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-md disabled:opacity-50"
           >
             <span>{isLoading ? 'Verifying...' : 'Sign In'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
 
           {/* Security Notice */}
-          <div className="flex items-center space-x-2 text-[10px] text-[#8E929C] justify-center pt-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#8BC6A1]" />
+          <div className="flex items-center space-x-2 text-[10px] text-[#A6AFBD] justify-center pt-1">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#80C9A0]" />
             <span>Simulated Auth Prototype · Ready for Supabase OAuth</span>
           </div>
 
           {/* Switch to Onboarding */}
-          <div className="pt-3 border-t border-[#252830] text-center text-xs text-[#8E929C]">
+          <div className="pt-3 border-t border-[#30343C] text-center text-xs text-[#A6AFBD]">
             <span>Don't have a financial plan yet? </span>
             <button
               type="button"
@@ -206,7 +206,7 @@ export const SignInModal: React.FC = () => {
                 setIsSignInOpen(false);
                 setIsOnboardingOpen(true);
               }}
-              className="text-[#D5B477] hover:underline font-semibold cursor-pointer"
+              className="text-[#E6C17D] hover:underline font-semibold cursor-pointer py-1"
             >
               Get Started
             </button>

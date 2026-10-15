@@ -111,36 +111,40 @@ export const OnboardingModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-      <div className="w-full max-w-xl bg-gradient-to-b from-[#1C2028] via-[#14171E] to-[#0D0F13] border border-[#30343B] rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-md animate-fadeIn overflow-y-auto">
+      <div className="w-full max-w-xl bg-gradient-to-b from-[#1A1D24] via-[#15171C] to-[#08090B] border-0 sm:border border-[#30343C] rounded-none sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col h-full sm:h-auto max-h-[100dvh] sm:max-h-[92dvh]">
         {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-[#30343B]/60 flex items-center justify-between">
+        <div 
+          className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-[#30343C]/60 flex items-center justify-between shrink-0 bg-[#15171C]/80"
+          style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top, 0px))' }}
+        >
           <div className="flex items-center space-x-2">
-            <span className="w-6 h-6 rounded-lg bg-[#D5B477]/15 border border-[#D5B477]/40 flex items-center justify-center text-xs font-bold text-[#D5B477]">
+            <span className="w-6 h-6 rounded-lg bg-[#E6C17D]/15 border border-[#E6C17D]/40 flex items-center justify-center text-xs font-bold text-[#E6C17D]">
               {step}
             </span>
-            <span className="text-xs font-mono tracking-wider text-[#A2A5AC] uppercase">
+            <span className="text-xs font-mono tracking-wider text-[#A6AFBD] uppercase">
               Step {step} of 4 · First-Time Plan Builder
             </span>
           </div>
           <button 
             onClick={() => setIsOnboardingOpen(false)}
-            className="p-1.5 rounded-lg text-[#A2A5AC] hover:text-[#F4F1EA] hover:bg-[#20242B] transition-colors"
+            className="w-8 h-8 rounded-lg text-[#A6AFBD] hover:text-[#F5F3EF] hover:bg-[#20232A] flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Close onboarding modal"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full h-1 bg-[#101216]">
+        <div className="w-full h-1 bg-[#101216] shrink-0">
           <div 
-            className="h-full bg-gradient-to-r from-[#D5B477] to-[#E5C68A] transition-all duration-300"
+            className="h-full bg-gradient-to-r from-[#E6C17D] to-[#F0D399] transition-all duration-300"
             style={{ width: `${(step / 4) * 100}%` }}
           />
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 overflow-y-auto max-h-[75vh]">
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1">
           {errorMsg && (
             <div className="mb-4 p-3 rounded-xl bg-[#E27D78]/10 border border-[#E27D78]/40 flex items-start space-x-2 text-xs text-[#E27D78]">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
@@ -440,11 +444,14 @@ export const OnboardingModal: React.FC = () => {
         </div>
 
         {/* Modal Footer Controls */}
-        <div className="px-6 py-4 bg-[#101216] border-t border-[#30343B]/60 flex items-center justify-between">
+        <div 
+          className="px-4 sm:px-6 py-3.5 sm:py-4 bg-[#15171C] border-t border-[#30343C]/60 flex items-center justify-between shrink-0"
+          style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}
+        >
           {step > 1 ? (
             <button
               onClick={handleBack}
-              className="px-4 py-2 rounded-xl text-xs font-medium text-[#A2A5AC] hover:text-[#F4F1EA] hover:bg-[#171A20] transition-colors flex items-center space-x-1.5"
+              className="px-4 py-2.5 rounded-xl text-xs font-medium text-[#A6AFBD] hover:text-[#F5F3EF] hover:bg-[#20232A] transition-colors flex items-center space-x-1.5 min-h-[44px] cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back</span>
@@ -454,7 +461,7 @@ export const OnboardingModal: React.FC = () => {
           {step < 4 ? (
             <button
               onClick={handleNext}
-              className="px-5 py-2.5 rounded-xl text-xs font-semibold bg-[#20242B] hover:bg-[#2A2F3B] text-[#F4F1EA] border border-[#A9B8C8]/30 transition-all flex items-center space-x-1.5"
+              className="px-6 py-2.5 rounded-xl text-xs font-semibold bg-[#20232A] hover:bg-[#282C35] text-[#F5F3EF] border border-[#30343C] hover:border-[#E6C17D]/40 transition-all flex items-center space-x-1.5 min-h-[44px] cursor-pointer"
             >
               <span>Continue</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -462,7 +469,7 @@ export const OnboardingModal: React.FC = () => {
           ) : (
             <button
               onClick={handleFinish}
-              className="px-6 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-[#D5B477] to-[#E5C68A] text-[#090A0C] hover:shadow-subtle-glow hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center space-x-1.5"
+              className="px-7 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-[#E6C17D] to-[#F0D399] text-[#08090B] hover:shadow-subtle-glow hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center space-x-1.5 min-h-[44px] cursor-pointer shadow-lg"
             >
               <Sparkles className="w-4 h-4" />
               <span>Create My Plan</span>
