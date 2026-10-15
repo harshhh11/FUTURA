@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-main: #090A0C;
+    --bg-surface: #101216;
+    --bg-card: #171A20;
+    --bg-elevated: #20242B;
+    --text-primary: #F4F1EA;
+    --text-secondary: #A2A5AC;
+    --border-subtle: #30343B;
+    --accent-gold: #D5B477;
+    --accent-green: #8BC6A1;
+    --accent-coral: #E27D78;
+    --accent-silver: #A9B8C8;
+  }
+
+  body {
+    background-color: #090A0C;
+    color: #F4F1EA;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Custom subtle scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #090A0C;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #252830;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3a3f4c;
+  }
+}
+
+/* Metallic chamfered border and glass effects */
+.silver-rim-card {
+  background: linear-gradient(180deg, rgba(32, 36, 43, 0.8) 0%, rgba(23, 26, 32, 0.95) 100%);
+  border: 1px solid rgba(169, 184, 200, 0.15);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+}
+
+.gold-rim-card {
+  background: linear-gradient(180deg, rgba(32, 36, 43, 0.9) 0%, rgba(23, 26, 32, 0.98) 100%);
+  border: 1px solid rgba(213, 180, 119, 0.3);
+  box-shadow: 0 0 30px -5px rgba(213, 180, 119, 0.15), inset 0 1px 0 rgba(213, 180, 119, 0.2);
+}
+
+.phone-device-chassis {
+  background: #0d0f12;
+  border-radius: 44px;
+  box-shadow: 
+    0 0 0 2px #262a33,
+    0 0 0 4px #15181e,
+    0 0 0 5px rgba(169, 184, 200, 0.22),
+    0 30px 80px -15px rgba(0, 0, 0, 0.95),
+    0 0 40px rgba(169, 184, 200, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ambient glow background gradients */
+.ambient-glow {
+  background: radial-gradient(circle at 50% 20%, rgba(169, 184, 200, 0.08) 0%, rgba(9, 10, 12, 0) 70%);
+}
+
+.gold-ambient-glow {
+  background: radial-gradient(circle at 50% 30%, rgba(213, 180, 119, 0.07) 0%, rgba(9, 10, 12, 0) 65%);
+}
+
+/* Concept 2 Rock/Lunar Terrain Texture Simulation */
+.rocky-terrain {
+  background: 
+    radial-gradient(ellipse at 50% 100%, #151820 0%, #090A0C 75%),
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 2px, transparent 2px, transparent 6px);
+}
+
+/* Cinematic 3D Floating Card, Pedestal Light & Specular Highlight Animations */
+@keyframes luxuryCardFloating {
+  0%, 100% {
+    transform: translateY(-8px) rotateX(15deg) rotateY(-24deg) rotateZ(31.5deg);
+  }
+  50% {
+    transform: translateY(7px) rotateX(17.5deg) rotateY(-21.5deg) rotateZ(33.5deg);
+  }
+}
+
+@keyframes specularSweep {
+  0% {
+    transform: translateX(-160%) translateY(-160%) rotate(38deg);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.85;
+  }
+  75% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateX(160%) translateY(160%) rotate(38deg);
+    opacity: 0;
+  }
+}
+
+@keyframes pedestalGlow {
+  0%, 100% {
+    opacity: 0.7;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.6));
+  }
+}
+
+.animate-card-floating {
+  animation: luxuryCardFloating 7s ease-in-out infinite;
+}
+
+.animate-card-shimmer {
+  animation: specularSweep 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-pedestal-glow {
+  animation: pedestalGlow 4s ease-in-out infinite;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
