@@ -15,7 +15,7 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#08090B]/90 backdrop-blur-md border-b border-[#30343C]/60 transition-all duration-200">
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-10 h-16 flex items-center justify-between">
         {/* Brand Wordmark & Emblem: Click to return to landing page */}
         <div 
           className="flex items-center space-x-3 cursor-pointer group shrink-0" 

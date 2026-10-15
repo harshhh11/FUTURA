@@ -69,7 +69,7 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-72 bg-[#15171C] border-r border-[#30343C]/60 flex flex-col flex-shrink-0 sticky top-16 h-[calc(100dvh-4rem)] p-4.5 select-none">
+    <aside className="w-[260px] xl:w-[280px] bg-[#15171C] border-r border-[#30343C]/60 flex flex-col flex-shrink-0 sticky top-16 h-[calc(100dvh-4rem)] p-4 xl:p-4.5 select-none">
       {/* Student Profile Snapshot Card */}
       <div className="p-4 mb-5 rounded-2xl bg-gradient-to-b from-[#20232A]/90 to-[#191C22] border border-[#30343C] shadow-card-depth">
         <div className="flex items-center justify-between mb-2.5">

@@ -88,15 +88,15 @@ const MainRouter: React.FC = () => {
         <Navbar />
       </div>
 
-      {/* Real App Shell: Desktop Left Sidebar + Main Content Workspace */}
-      <div className="flex-1 flex w-full max-w-[1600px] mx-auto">
+      {/* Real App Shell: Desktop Left Sidebar + Main Content Workspace (Full Width on Desktop) */}
+      <div className="flex-1 flex w-full">
         {/* Desktop Left Sidebar */}
-        <div className="hidden md:block">
+        <div className="hidden md:block shrink-0">
           <Sidebar />
         </div>
 
         {/* Main App Workspace */}
-        <main className={`flex-1 px-0 sm:px-5 lg:px-8 py-0 sm:py-5 lg:py-8 min-w-0 pb-24 md:pb-12 w-full ${
+        <main className={`flex-1 px-0 sm:px-4 lg:px-6 xl:px-8 py-0 sm:py-4 lg:py-6 min-w-0 pb-24 md:pb-12 w-full ${
           compactMode ? 'space-y-4' : 'space-y-6'
         }`}>
           {renderCurrentView()}
