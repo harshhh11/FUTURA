@@ -4,39 +4,7 @@ export type InvestmentCategoryId =
   | 'bonds' 
   | 'gold' 
   | 'index_funds' 
-  | 'mutual_funds'
-  | 'equities';
-
-export interface ApplicableRisk {
-  name: string; // e.g., 'Inflation Risk' | 'Credit Risk' | 'Market Volatility' | 'Interest Rate Risk' | 'Liquidity Risk' | 'Concentration Risk' | 'Reinvestment Risk'
-  level: 'Low' | 'Moderate' | 'High' | 'Severe';
-  description: string;
-  whyItMatters: string;
-}
-
-export interface InvestmentScenario {
-  rate: number; // e.g. 0.08
-  label: string; // e.g. "Conservative"
-  description: string;
-}
-
-export interface CostFeeItem {
-  name: string;
-  typicalAmount: string;
-  description: string;
-}
-
-export interface TaxInfo {
-  summary: string;
-  details: string;
-  slabDependent: boolean;
-  regulatoryNote: string;
-}
-
-export interface SuitabilityGuidance {
-  whenItFits: string[];
-  whenItDoesNotFit: string[];
-}
+  | 'mutual_funds';
 
 export interface InvestmentCategory {
   id: InvestmentCategoryId;
@@ -45,12 +13,8 @@ export interface InvestmentCategory {
   description: string;
   returnMechanism: string;
   illustrativeReturnRate: number; // e.g., 0.12 for 12%
-  returnRange?: string; // e.g., '~11.0% – 13.5% p.a.'
-  riskLevel: 'Very Low' | 'Low' | 'Moderate' | 'High' | 'Very High';
+  riskLevel: 'Very Low' | 'Low' | 'Moderate' | 'High';
   volatilityRating: number; // 1 to 5
-  mainRiskTag?: string;
-  isMarketLinked?: boolean;
-  capitalProtection?: string;
   liquidity: 'Instant (24/7)' | '1-3 Business Days' | 'Fixed Lock-in (1-5 yrs)' | 'Market Hours (T+1)';
   withdrawalRestrictions: string;
   costsToCheck: string[];
@@ -60,17 +24,6 @@ export interface InvestmentCategory {
   historicalContext: string;
   pros: string[];
   cons: string[];
-  scenarios?: {
-    conservative: InvestmentScenario;
-    middle: InvestmentScenario;
-    strong: InvestmentScenario;
-  };
-  applicableRisks?: ApplicableRisk[];
-  costsAndFees?: CostFeeItem[];
-  taxConsiderations?: TaxInfo;
-  detailedSuitability?: SuitabilityGuidance;
-  howItWorksSteps?: string[];
-  dataSourceNote?: string;
 }
 
 export interface UserFinancialProfile {
