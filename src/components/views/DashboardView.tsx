@@ -2,18 +2,22 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatINR } from '../../utils/calculations';
 import { sound } from '../../utils/sound';
+import { FuturaCardHero } from '../cinematic/FuturaCardHero';
 import { 
   Eye, 
   EyeOff, 
-  Bell, 
-  ChevronRight, 
   TrendingUp, 
   Wallet, 
   Shield, 
   Target, 
   Sparkles,
   ArrowUpRight,
-  ChevronDown
+  ChevronDown,
+  ChevronRight,
+  ShieldAlert,
+  ArrowRight,
+  Compass,
+  BookOpen
 } from 'lucide-react';
 
 export const DashboardView: React.FC = () => {
@@ -21,7 +25,6 @@ export const DashboardView: React.FC = () => {
     userProfile, 
     accountAllocations, 
     navigateTo, 
-    setIsAppLauncherOpen,
     reducedMotion 
   } = useApp();
 
@@ -104,224 +107,130 @@ export const DashboardView: React.FC = () => {
   const activePoint = points[selectedMonthIndex] || points[points.length - 1];
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-4 sm:space-y-5 animate-fadeIn pb-32 text-[#F4F1EA] select-none">
+    <div className="w-full space-y-6 animate-fadeIn pb-28 md:pb-12 text-[#F4F1EA] select-none">
       
-      {/* 1. TOP PROFILE GREETING & NOTIFICATION HEADER (Screen 1 Source of Truth) */}
-      <div className="flex items-center justify-between pt-1">
-        <div className="flex items-center space-x-3">
-          {/* Avatar with subtle gold ring */}
-          <div className="w-10 h-10 rounded-full p-[1.5px] bg-gradient-to-tr from-[#D5B477]/80 via-[#CAD2DC]/40 to-transparent shadow-md">
-            <div className="w-full h-full rounded-full overflow-hidden bg-[#16181F]">
-              <img 
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" 
-                alt="Aarav"
-                className="w-full h-full object-cover" 
-              />
-            </div>
-          </div>
-
-          <div>
-            <h1 className="font-display font-bold text-sm sm:text-base text-[#F4F1EA] leading-tight">
-              Hello, {userProfile?.name ? userProfile.name.split(' ')[0] : 'Aarav'}!
-            </h1>
-            <p className="text-[11px] text-[#8E929C] flex items-center space-x-1 mt-0.5">
-              <span>Keep building</span>
-              <span className="text-xs">✌️</span>
-            </p>
-          </div>
+      {/* RESPONSIVE LAYOUT: 1-Column on Mobile, 2-Column on Desktop */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+        
+        {/* LEFT COLUMN: THE ICONIC 3D METALLIC CARD HERO + CAROUSEL + SMART ALLOCATIONS */}
+        <div className="lg:col-span-5 w-full flex justify-center">
+          <FuturaCardHero />
         </div>
 
-        {/* Top Right Controls: Notification Bell + 4-Square Grid Launcher Button */}
-        <div className="flex items-center space-x-2">
-          {/* Notification Bell with red dot */}
-          <button
-            onClick={() => sound.playClick()}
-            className="w-9 h-9 rounded-2xl bg-[#14161C] hover:bg-[#1C1F26] border border-[#2D313B] flex items-center justify-center text-[#A2A5AC] hover:text-[#F4F1EA] relative transition-all active:scale-95 cursor-pointer shadow-sm"
-            title="Notifications"
-            aria-label="Notifications"
-          >
-            <Bell className="w-4 h-4" />
-            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#E27D78] ring-2 ring-[#14161C]" />
-          </button>
+        {/* RIGHT COLUMN: ANALYTICS, CATEGORY CARDS & GROWTH TRAJECTORY */}
+        <div className="lg:col-span-7 w-full space-y-4 sm:space-y-5">
+          
+          {/* Total Wealth Header */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-[#101216]/90 border border-[#2D313B]/80 shadow-card-depth flex items-center justify-between">
+            <div className="space-y-1">
+              <div className="flex items-center space-x-1.5 text-xs text-[#8E929C]">
+                <span className="tracking-tight">Total Portfolio Wealth</span>
+                <button
+                  onClick={() => {
+                    sound.playClick();
+                    setShowWealth(!showWealth);
+                  }}
+                  className="text-[#8E929C] hover:text-[#D5B477] transition-colors cursor-pointer"
+                  title={showWealth ? 'Hide balance' : 'Show balance'}
+                >
+                  {showWealth ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 text-[#D5B477]" />}
+                </button>
+              </div>
 
-          {/* 4-Square Grid Launcher Icon Button [::] */}
-          <button
-            onClick={() => {
-              sound.playChime();
-              setIsAppLauncherOpen(true);
-            }}
-            className="w-9 h-9 rounded-2xl bg-[#1C1F26] hover:bg-[#252932] border border-[#30343B] hover:border-[#D5B477]/50 flex items-center justify-center text-white/90 active:scale-95 transition-all shadow-sm group cursor-pointer"
-            title="Open Navigation Menu"
-            aria-label="Open navigation menu"
-          >
-            <div className="grid grid-cols-2 gap-[2.5px] w-3.5 h-3.5 group-hover:scale-105 transition-transform">
-              <div className="w-1.5 h-1.5 rounded-[1.5px] bg-[#F4F1EA]" />
-              <div className="w-1.5 h-1.5 rounded-[1.5px] bg-[#F4F1EA]" />
-              <div className="w-1.5 h-1.5 rounded-[1.5px] bg-[#F4F1EA]" />
-              <div className="w-1.5 h-1.5 rounded-[1.5px] bg-[#F4F1EA]" />
+              <div className="font-display font-extrabold text-2xl sm:text-3xl tracking-tight text-[#F4F1EA] leading-tight">
+                {showWealth ? formatINR(totalWealth) : '••••••••'}
+              </div>
+
+              <div className="flex items-center space-x-1.5 text-xs font-mono font-medium pt-0.5">
+                <span className="text-[#8BC6A1] flex items-center">
+                  <span>↑</span>
+                  <span className="ml-0.5">+12.4%</span>
+                </span>
+                <span className="text-[#D5B477]">+₹39,450 this year</span>
+              </div>
             </div>
-          </button>
-        </div>
-      </div>
 
-      {/* 2. TOTAL WEALTH & METALLIC CARD AREA (Exact Screen 1 Reference) */}
-      <div className="pt-2 pb-1 flex items-center justify-between">
-        {/* Left Column: Wealth Metrics */}
-        <div className="space-y-1">
-          <div className="flex items-center space-x-1.5 text-xs text-[#8E929C]">
-            <span className="tracking-tight">Total Wealth (Simulated)</span>
             <button
               onClick={() => {
                 sound.playClick();
-                setShowWealth(!showWealth);
+                navigateTo('balance');
               }}
-              className="text-[#8E929C] hover:text-[#D5B477] transition-colors cursor-pointer"
-              title={showWealth ? 'Hide balance' : 'Show balance'}
+              className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#1C1F26] hover:bg-[#252932] border border-[#30343B] hover:border-[#D5B477]/50 text-[#F4F1EA] flex items-center space-x-1.5 transition-all cursor-pointer"
             >
-              {showWealth ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 text-[#D5B477]" />}
+              <span>Balance Details</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-[#D5B477]" />
             </button>
           </div>
 
-          <div className="font-display font-extrabold text-3xl sm:text-[34px] tracking-tight text-[#F4F1EA] leading-tight">
-            {showWealth ? formatINR(totalWealth) : '••••••••'}
-          </div>
-
-          <div className="flex items-center space-x-1.5 text-xs font-mono font-medium pt-0.5">
-            <span className="text-[#8BC6A1] flex items-center">
-              <span>↑</span>
-              <span className="ml-0.5">+12.4%</span>
-            </span>
-            <span className="text-[#D5B477]">+₹39,450 this year</span>
-          </div>
-        </div>
-
-        {/* Right Column: Mini Floating Metallic 3D Silver Card */}
-        <div 
-          onClick={() => {
-            sound.playChime();
-            navigateTo('balance');
-          }}
-          className="relative w-28 h-20 cursor-pointer group shrink-0"
-          title="FUTURA Metallic Vault Card"
-        >
-          {/* Subtle Ambient Glow */}
-          <div className="absolute inset-0 bg-[#D5B477]/10 blur-xl rounded-full group-hover:bg-[#D5B477]/20 transition-all pointer-events-none" />
-
-          {/* Diagonally Angled Card Body */}
-          <div 
-            className="w-full h-full rounded-xl p-2 relative overflow-hidden transition-all duration-300 group-hover:scale-105 group-hover:rotate-[-4deg]"
-            style={{
-              transform: 'rotate(-7deg) skewX(-2deg)',
-              background: 'linear-gradient(135deg, #F0F4F8 0%, #D4DDE8 28%, #A8B4C2 40%, #171A21 41%, #0A0C10 75%, #050608 100%)',
-              boxShadow: '0 12px 25px -5px rgba(0,0,0,0.85), inset 0 1px 1px rgba(255,255,255,0.7), 0 0 0 1px rgba(255,255,255,0.2)'
-            }}
-          >
-            {/* Razor-sharp diagonal reflection seam */}
+          {/* 3 Financial Category Cards (Cash & Savings, Investments, Emergency Buffer) */}
+          <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
+            {/* 1. Cash & Savings */}
             <div 
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.8) 40%, rgba(0,0,0,0.6) 41%, transparent 70%)'
+              onClick={() => {
+                sound.playClick();
+                navigateTo('budget');
               }}
-            />
-
-            <div className="relative z-10 w-full h-full flex flex-col justify-between text-[8px] text-white/90">
-              <div className="flex items-center justify-between font-display font-bold uppercase tracking-wider text-[9px]">
-                <span>FUTURA</span>
+              className="p-3 sm:p-3.5 rounded-2xl bg-[#101216]/90 border border-[#2D313B]/80 hover:border-[#D5B477]/40 transition-all cursor-pointer group flex flex-col justify-between"
+            >
+              <div className="flex items-center justify-between text-[#8E929C] mb-1.5">
+                <span className="text-[10px] sm:text-[11px] font-medium leading-tight">Cash & Savings</span>
+                <Wallet className="w-3.5 h-3.5 text-[#D5B477] shrink-0" />
               </div>
+              <div>
+                <div className="font-display font-bold text-xs sm:text-sm text-[#F4F1EA] tracking-tight">
+                  {formatINR(accountAllocations.cash)}
+                </div>
+                <div className="text-[10px] font-mono text-[#D5B477] mt-0.5">
+                  {cashPct}%
+                </div>
+              </div>
+            </div>
 
-              {/* EMV chip */}
-              <div className="w-5 h-3.5 rounded-sm bg-gradient-to-br from-[#E2E6EC] to-[#757E8C] border border-white/40 shadow-xs" />
+            {/* 2. Investments */}
+            <div 
+              onClick={() => {
+                sound.playClick();
+                navigateTo('portfolio');
+              }}
+              className="p-3 sm:p-3.5 rounded-2xl bg-[#101216]/90 border border-[#2D313B]/80 hover:border-[#8BC6A1]/40 transition-all cursor-pointer group flex flex-col justify-between"
+            >
+              <div className="flex items-center justify-between text-[#8E929C] mb-1.5">
+                <span className="text-[10px] sm:text-[11px] font-medium leading-tight">Investments</span>
+                <TrendingUp className="w-3.5 h-3.5 text-[#8BC6A1] shrink-0" />
+              </div>
+              <div>
+                <div className="font-display font-bold text-xs sm:text-sm text-[#F4F1EA] tracking-tight">
+                  {formatINR(accountAllocations.investments)}
+                </div>
+                <div className="text-[10px] font-mono text-[#8BC6A1] mt-0.5">
+                  {invPct}%
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Emergency Buffer */}
+            <div 
+              onClick={() => {
+                sound.playClick();
+                navigateTo('moneyflow');
+              }}
+              className="p-3 sm:p-3.5 rounded-2xl bg-[#101216]/90 border border-[#2D313B]/80 hover:border-[#A9B8C8]/40 transition-all cursor-pointer group flex flex-col justify-between"
+            >
+              <div className="flex items-center justify-between text-[#8E929C] mb-1.5">
+                <span className="text-[10px] sm:text-[11px] font-medium leading-tight">Emergency Buffer</span>
+                <Shield className="w-3.5 h-3.5 text-[#A9B8C8] shrink-0" />
+              </div>
+              <div>
+                <div className="font-display font-bold text-xs sm:text-sm text-[#F4F1EA] tracking-tight">
+                  {formatINR(accountAllocations.reserve)}
+                </div>
+                <div className="text-[10px] font-mono text-[#A9B8C8] mt-0.5">
+                  {reservePct}%
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* 3. THREE FINANCIAL CATEGORY CARDS (Screen 1 3-Column Responsive Grid) */}
-      <div className="grid grid-cols-3 gap-2.5">
-        {/* Card 1: Cash & Savings */}
-        <div
-          onClick={() => {
-            sound.playClick();
-            navigateTo('balance');
-          }}
-          className="p-3 rounded-2xl bg-gradient-to-b from-[#1C1F26] to-[#12141A] border border-[#2D313B] hover:border-[#D5B477]/50 transition-all cursor-pointer shadow-md group flex flex-col justify-between min-h-[110px]"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <div className="w-7 h-7 rounded-xl bg-[#242832] flex items-center justify-center text-[#D5B477] shadow-inner">
-              <Wallet className="w-3.5 h-3.5" />
-            </div>
-            <ChevronRight className="w-3 h-3 text-[#5A5F6D] group-hover:text-[#D5B477] transition-colors" />
-          </div>
-
-          <div>
-            <span className="block text-[10px] text-[#8E929C] font-medium leading-tight">
-              Cash & Savings
-            </span>
-            <span className="block font-mono font-bold text-xs sm:text-sm text-[#F4F1EA] mt-0.5">
-              {showWealth ? formatINR(accountAllocations.cash || 100000) : '••••'}
-            </span>
-            <span className="block text-[9px] text-[#6E7380] font-mono mt-0.5">
-              {cashPct}% of total
-            </span>
-          </div>
-        </div>
-
-        {/* Card 2: Investments */}
-        <div
-          onClick={() => {
-            sound.playClick();
-            navigateTo('portfolio');
-          }}
-          className="p-3 rounded-2xl bg-gradient-to-b from-[#1C1F26] to-[#12141A] border border-[#2D313B] hover:border-[#D5B477]/50 transition-all cursor-pointer shadow-md group flex flex-col justify-between min-h-[110px]"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <div className="w-7 h-7 rounded-xl bg-[#242832] flex items-center justify-center text-[#D5B477] shadow-inner">
-              <TrendingUp className="w-3.5 h-3.5" />
-            </div>
-            <ChevronRight className="w-3 h-3 text-[#5A5F6D] group-hover:text-[#D5B477] transition-colors" />
-          </div>
-
-          <div>
-            <span className="block text-[10px] text-[#8E929C] font-medium leading-tight">
-              Investments
-            </span>
-            <span className="block font-mono font-bold text-xs sm:text-sm text-[#F4F1EA] mt-0.5">
-              {showWealth ? formatINR(accountAllocations.investments || 235720) : '••••'}
-            </span>
-            <span className="block text-[9px] text-[#6E7380] font-mono mt-0.5">
-              {invPct}% of total
-            </span>
-          </div>
-        </div>
-
-        {/* Card 3: Emergency Buffer */}
-        <div
-          onClick={() => {
-            sound.playClick();
-            navigateTo('bad_year');
-          }}
-          className="p-3 rounded-2xl bg-gradient-to-b from-[#1C1F26] to-[#12141A] border border-[#2D313B] hover:border-[#D5B477]/50 transition-all cursor-pointer shadow-md group flex flex-col justify-between min-h-[110px]"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <div className="w-7 h-7 rounded-xl bg-[#242832] flex items-center justify-center text-[#D5B477] shadow-inner">
-              <Shield className="w-3.5 h-3.5" />
-            </div>
-            <ChevronRight className="w-3 h-3 text-[#5A5F6D] group-hover:text-[#D5B477] transition-colors" />
-          </div>
-
-          <div>
-            <span className="block text-[10px] text-[#8E929C] font-medium leading-tight">
-              Emergency Buffer
-            </span>
-            <span className="block font-mono font-bold text-xs sm:text-sm text-[#F4F1EA] mt-0.5">
-              {showWealth ? formatINR(accountAllocations.reserve || 21000) : '••••'}
-            </span>
-            <span className="block text-[9px] text-[#6E7380] font-mono mt-0.5">
-              {reservePct}% of total
-            </span>
-          </div>
-        </div>
-      </div>
 
       {/* 4. PORTFOLIO GROWTH SECTION (Golden Mountain Curve with Live Tooltip) */}
       <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-b from-[#171A21] to-[#0E1015] border border-[#2D313B] shadow-card-depth space-y-3">
@@ -505,6 +414,89 @@ export const DashboardView: React.FC = () => {
         <ChevronRight className="w-4 h-4 text-[#6A707E] group-hover:text-[#D5B477] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
       </div>
 
+      {/* 6. SIGNATURE STRESS TEST: REHEARSE A BAD YEAR */}
+      <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#20242B] via-[#1C1819] to-[#251817] border border-[#E27D78]/30 shadow-card-depth flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-full bg-[#E27D78]/15 border border-[#E27D78]/30 text-[9px] font-mono text-[#E27D78]">
+            <ShieldAlert className="w-3 h-3" />
+            <span>SIGNATURE STRESS TEST</span>
+          </div>
+          <h4 className="font-display text-sm font-bold text-[#F4F1EA]">
+            Rehearse a Bad Year Shock
+          </h4>
+          <p className="text-xs text-[#A2A5AC] leading-relaxed max-w-md">
+            Simulate a 10%, 20%, or 30% correction before investing real money. See why continuing your monthly SIP during downturns accelerates wealth recovery.
+          </p>
+        </div>
+        <button
+          onClick={() => {
+            sound.playClick();
+            navigateTo('bad_year');
+          }}
+          className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#E27D78] hover:bg-[#E88C88] text-[#090A0C] transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer shadow-sm active:scale-95"
+        >
+          <span>Stress Test</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </button>
+      </div>
+
+      {/* 7. QUICK ACCESS TILES */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div 
+          onClick={() => {
+            sound.playClick();
+            navigateTo('explorer');
+          }}
+          className="p-3.5 rounded-2xl bg-[#101216]/90 border border-[#2D313B]/80 hover:border-[#A9B8C8]/50 cursor-pointer transition-all group"
+        >
+          <div className="flex items-center justify-between mb-1.5">
+            <Compass className="w-4 h-4 text-[#A9B8C8] group-hover:rotate-45 transition-transform" />
+            <ArrowRight className="w-3 h-3 text-[#A2A5AC] group-hover:translate-x-1 group-hover:text-[#F4F1EA] transition-all" />
+          </div>
+          <h5 className="text-xs font-bold text-[#F4F1EA]">6 Asset Classes</h5>
+          <p className="text-[10px] text-[#A2A5AC] mt-0.5 leading-snug">
+            Index Funds, FDs, Gold, Bonds in plain English.
+          </p>
+        </div>
+
+        <div 
+          onClick={() => {
+            sound.playClick();
+            navigateTo('simulator');
+          }}
+          className="p-3.5 rounded-2xl bg-[#101216]/90 border border-[#2D313B]/80 hover:border-[#D5B477]/50 cursor-pointer transition-all group"
+        >
+          <div className="flex items-center justify-between mb-1.5">
+            <TrendingUp className="w-4 h-4 text-[#D5B477] group-hover:scale-110 transition-transform" />
+            <ArrowRight className="w-3 h-3 text-[#A2A5AC] group-hover:translate-x-1 group-hover:text-[#F4F1EA] transition-all" />
+          </div>
+          <h5 className="text-xs font-bold text-[#F4F1EA]">Goal Simulator</h5>
+          <p className="text-[10px] text-[#A2A5AC] mt-0.5 leading-snug">
+            Simulate stepping up to ₹1,500/mo SIP.
+          </p>
+        </div>
+
+        <div 
+          onClick={() => {
+            sound.playClick();
+            navigateTo('learning');
+          }}
+          className="p-3.5 rounded-2xl bg-[#101216]/90 border border-[#2D313B]/80 hover:border-[#8BC6A1]/50 cursor-pointer transition-all group"
+        >
+          <div className="flex items-center justify-between mb-1.5">
+            <BookOpen className="w-4 h-4 text-[#8BC6A1] group-hover:scale-110 transition-transform" />
+            <ArrowRight className="w-3 h-3 text-[#A2A5AC] group-hover:translate-x-1 group-hover:text-[#F4F1EA] transition-all" />
+          </div>
+          <h5 className="text-xs font-bold text-[#F4F1EA]">Learning Hub</h5>
+          <p className="text-[10px] text-[#A2A5AC] mt-0.5 leading-snug">
+            10 interactive student guides & lessons.
+          </p>
+        </div>
+      </div>
+
     </div>
+  </div>
+
+</div>
   );
 };

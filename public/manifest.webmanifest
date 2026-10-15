@@ -1,0 +1,18 @@
+{
+  "name": "FUTURA — Financial Planning",
+  "short_name": "FUTURA",
+  "description": "Next-generation financial planning and investment app for disciplined wealth building.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07080A",
+  "theme_color": "#07080A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

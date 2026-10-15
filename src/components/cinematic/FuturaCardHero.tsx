@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { sound } from '../../utils/sound';
+import { formatINR } from '../../utils/calculations';
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -21,6 +22,11 @@ type CardFinish = 'silver' | 'gold' | 'obsidian';
 
 export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
   const { navigateTo, userProfile, reducedMotion, setIsAppLauncherOpen } = useApp();
+  const currentBalance = userProfile?.currentSavings || 12450;
+  const goalTarget = userProfile?.goalTargetAmount || 1000000;
+  const goalProgressPct = Math.min(100, Math.max(1, Math.round((currentBalance / goalTarget) * 100)));
+  const monthlySip = userProfile?.comfortableMonthlyContribution || 1000;
+
   const [activeFinish, setActiveFinish] = useState<CardFinish>('silver');
   const [selectedAvatar, setSelectedAvatar] = useState<number>(1); // 1 = Karina (has indicator in reference)
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
@@ -104,29 +110,25 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative w-full h-full min-h-full bg-[#000000] text-white flex flex-col justify-between items-center overflow-hidden select-none font-sans"
+      className="relative w-full bg-transparent text-white flex flex-col justify-between items-center overflow-x-hidden select-none font-sans"
     >
       {/* Background Directional Studio Lighting */}
       <div className="absolute top-0 right-1/4 w-[600px] h-[520px] bg-gradient-to-b from-white/[0.05] via-white/[0.015] to-transparent blur-3xl pointer-events-none rounded-full" />
       <div className="absolute top-1/3 left-1/3 w-[450px] h-[450px] bg-white/[0.02] blur-3xl pointer-events-none rounded-full" />
 
       {/* SMARTPHONE-PROPORTIONED CANVAS (Centered on Pure Black Full Viewport) */}
-      <div className="w-full max-w-[420px] sm:max-w-[440px] h-full flex flex-col justify-between px-5 pt-2 pb-16 relative z-10">
+      <div className="w-full max-w-[420px] sm:max-w-[440px] flex flex-col justify-between px-3 sm:px-4 pt-1 pb-4 relative z-10">
 
-        {/* 1. TOP HEADER BAR */}
-        <header className="flex items-center justify-between w-full pt-2">
+        {/* 1. TOP HEADER BAR (Mobile Only) */}
+        <header 
+          className="flex items-center justify-between w-full pt-1.5 pb-1 md:hidden"
+          style={{ paddingTop: 'max(0.5rem, env(safe-area-inset-top, 0px))' }}
+        >
           {/* Top Left: Circular Profile Portrait + "Hello, Aarav!" */}
           <div className="flex items-center space-x-2.5">
-            <div className="w-9 h-9 rounded-full p-[1.5px] bg-gradient-to-tr from-[#D5B477] via-purple-500 to-indigo-400 shadow-sm shrink-0">
-              <div className="w-full h-full rounded-full overflow-hidden bg-[#12141A]">
-                <img 
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" 
-                  alt="Aarav" 
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
+            <div className="w-9 h-9 rounded-full p-[1.5px] bg-gradient-to-tr from-[#DDBA78] via-[#C2CAD4] to-[#757E8C] shadow-sm shrink-0">
+              <div className="w-full h-full rounded-full overflow-hidden bg-[#12141A] flex items-center justify-center font-bold text-xs text-[#DDBA78]">
+                <span>{userProfile?.name ? userProfile.name.charAt(0) : 'A'}</span>
               </div>
             </div>
             <div className="leading-tight">
@@ -137,16 +139,16 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
             </div>
           </div>
 
-          {/* Top Right: Notification Bell with Purple Dot + 2x2 App Grid Button */}
+          {/* Top Right: Notification Bell with Gold Dot + 2x2 App Grid Button */}
           <div className="flex items-center space-x-2.5">
             {/* Notification Icon */}
             <button 
               onClick={() => sound.playClick()}
-              className="w-8 h-8 rounded-full flex items-center justify-center relative text-white/80 hover:text-white transition-colors"
+              className="w-8 h-8 rounded-full flex items-center justify-center relative text-white/80 hover:text-white transition-colors cursor-pointer"
               title="Notifications"
             >
               <Bell className="w-4 h-4" />
-              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#B692F6] ring-2 ring-black" />
+              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#DDBA78] ring-2 ring-black" />
             </button>
 
             {/* App Grid Icon Button [::] -> Opens FUTURA 4-Grid Launcher */}
@@ -169,7 +171,7 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
           </div>
         </header>
 
-        {/* 2. UPPER RIGHT: "Your future, in progress." CAPTION & LARGE WHITE BALANCE */}
+        {/* 2. UPPER RIGHT: "Your future, in progress." CAPTION & DYNAMIC WHITE BALANCE */}
         <div className="w-full pt-3 pb-1">
           <div className="flex flex-col items-end text-right">
             {/* Mandated Caption */}
@@ -177,7 +179,7 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
               Your future, in progress.
             </span>
 
-            {/* Large White Balance: ₹12,450.00 (Click opens Balance page) */}
+            {/* Large White Balance: Dynamic from User Profile (Click opens Balance page) */}
             <div 
               onClick={() => {
                 sound.playClick();
@@ -186,26 +188,19 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
               className="flex items-baseline justify-end text-3xl sm:text-[40px] font-extrabold text-white tracking-tight leading-none font-display cursor-pointer hover:opacity-95 transition-opacity"
               title="Click to view Balance page"
             >
-              {currencyMode === 'INR' ? (
-                <>
-                  <span>₹12,450</span>
-                  <span className="text-xl sm:text-2xl font-bold text-white/90">.00</span>
-                </>
-              ) : (
-                <>
-                  <span>$3567</span>
-                  <span className="text-xl sm:text-2xl font-bold text-white/90">.37</span>
-                </>
-              )}
+              <span>{formatINR(currentBalance)}</span>
             </div>
 
-            {/* Small Goal Milestone Progress Indicator */}
+            {/* Dynamic Goal Milestone Progress Indicator */}
             <div className="flex items-center space-x-1.5 mt-1.5">
               <span className="text-[10px] font-mono text-[#8E929C]">Goal Milestone</span>
-              <div className="w-14 h-1 bg-white/15 rounded-full overflow-hidden">
-                <div className="w-[42%] h-full bg-gradient-to-r from-[#D5B477] to-white rounded-full" />
+              <div className="w-16 h-1.5 bg-white/15 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-[#DDBA78] to-white rounded-full transition-all duration-500" 
+                  style={{ width: `${goalProgressPct}%` }}
+                />
               </div>
-              <span className="text-[9px] font-mono text-white/80 font-bold">42%</span>
+              <span className="text-[9px] font-mono text-[#DDBA78] font-bold">{goalProgressPct}%</span>
             </div>
           </div>
         </div>
@@ -214,24 +209,24 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
         <div className="relative w-full my-auto py-2 flex flex-col items-center justify-center min-h-[380px] sm:min-h-[410px]">
           
           {/* FLOATING SUPPORTING FINANCIAL DETAILS (FUTURA Instruments, positioned in negative space) */}
-          {/* Upper Right Metric: [+12.4%] [Nifty 50 ₹1,000.00] */}
+          {/* Upper Right Metric: [+12.4%] [Nifty 50 SIP from user profile] */}
           <div className="absolute right-0 top-3 z-30 flex items-center space-x-1.5 pointer-events-none">
             <span className="px-2 py-0.5 rounded-full bg-[#181B22] border border-[#8BC6A1]/30 text-[#8BC6A1] text-[10px] font-mono font-medium shadow-sm">
               +12.4%
             </span>
             <div className="text-right leading-none">
               <span className="block text-[10px] text-[#8E929C] -mb-0.5">Nifty 50 SIP</span>
-              <span className="text-xs sm:text-sm font-semibold text-white font-mono tracking-tight">₹1,000.00</span>
+              <span className="text-xs sm:text-sm font-semibold text-white font-mono tracking-tight">{formatINR(monthlySip)}</span>
             </div>
           </div>
 
-          {/* Lower Left Metric: [Gold ETF ₹200.00] [+8.2%] */}
+          {/* Lower Left Metric: [Gold ETF] [+8.2%] */}
           <div className="absolute left-0 bottom-16 z-30 flex items-center space-x-1.5 pointer-events-none">
             <div className="text-left leading-none">
               <span className="block text-[10px] text-[#8E929C] -mb-0.5">Gold ETF</span>
-              <span className="text-xs sm:text-sm font-semibold text-white font-mono tracking-tight">₹200.00</span>
+              <span className="text-xs sm:text-sm font-semibold text-white font-mono tracking-tight">{formatINR(Math.round(monthlySip * 0.2))}</span>
             </div>
-            <span className="px-2 py-0.5 rounded-full bg-[#181B22] border border-[#D5B477]/30 text-[#D5B477] text-[10px] font-mono font-medium shadow-sm">
+            <span className="px-2 py-0.5 rounded-full bg-[#181B22] border border-[#DDBA78]/30 text-[#DDBA78] text-[10px] font-mono font-medium shadow-sm">
               +8.2%
             </span>
           </div>
@@ -401,11 +396,13 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
         </div>
 
         {/* 4. BOTTOM DOCK & INTERACTIVE EXPANDED DRAWER (Images 2 & 3) */}
-        <div className={`w-full transition-all duration-500 ease-out z-50 ${
-          isDrawerOpen 
-            ? 'fixed inset-x-0 bottom-0 max-w-[440px] mx-auto h-[68%] rounded-t-[36px] bg-[#0E1015]/95 border-t border-white/15 backdrop-blur-2xl shadow-2xl flex flex-col justify-between p-5'
-            : 'rounded-t-3xl bg-[#0E1015]/95 border-t border-white/10 pt-3.5 pb-6 px-4 shadow-2xl backdrop-blur-md cursor-pointer'
-        }`}
+        <div 
+          className={`w-full transition-all duration-500 ease-out z-50 ${
+            isDrawerOpen 
+              ? 'fixed inset-x-0 bottom-0 max-w-[440px] mx-auto h-[70%] rounded-t-[36px] bg-[#0E1015]/98 border-t border-white/20 backdrop-blur-2xl shadow-2xl flex flex-col justify-between p-5'
+              : 'rounded-2xl bg-[#0E1015]/90 border border-white/10 pt-3 pb-3 px-4 shadow-xl backdrop-blur-md cursor-pointer'
+          }`}
+          style={isDrawerOpen ? { paddingBottom: 'max(2.5rem, env(safe-area-inset-bottom, 0px))' } : undefined}
           onClick={() => {
             if (!isDrawerOpen) {
               sound.playClick();

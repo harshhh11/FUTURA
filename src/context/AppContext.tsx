@@ -56,6 +56,13 @@ interface AppContextType {
   setCompactMode: (enabled: boolean) => void;
   deviceViewMode: 'responsive' | 'mobile_frame';
   setDeviceViewMode: (mode: 'responsive' | 'mobile_frame') => void;
+  hasCompletedOnboarding: boolean;
+  setHasCompletedOnboarding: (completed: boolean) => void;
+  isSignInOpen: boolean;
+  setIsSignInOpen: (open: boolean) => void;
+  currentUser: { email: string; name: string } | null;
+  signInUser: (email: string, password?: string) => void;
+  signOutUser: () => void;
   accountAllocations: Record<'cash' | 'investments' | 'reserve', number>;
   balanceTransactions: BalanceTransaction[];
   addMoneyToBalance: (amount: number, category: 'cash' | 'investments' | 'reserve', description?: string) => boolean;
@@ -73,10 +80,54 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  // Navigation - default to working application dashboard
-  const [currentRoute, setCurrentRoute] = useState<ViewRoute>('dashboard');
+  // Check if user has completed onboarding before
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('futura_has_onboarded');
+      return saved === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  // Navigation - if onboarded, default to dashboard, otherwise landing
+  const [currentRoute, setCurrentRoute] = useState<ViewRoute>(() => {
+    try {
+      const saved = localStorage.getItem('futura_has_onboarded');
+      return saved === 'true' ? 'dashboard' : 'landing';
+    } catch {
+      return 'landing';
+    }
+  });
+
   const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(false);
+  const [isSignInOpen, setIsSignInOpen] = useState<boolean>(false);
   const [isAppLauncherOpen, setIsAppLauncherOpen] = useState<boolean>(false);
+
+  const [currentUser, setCurrentUser] = useState<{ email: string; name: string } | null>(() => {
+    try {
+      const saved = localStorage.getItem('futura_current_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const signInUser = (email: string, _password?: string) => {
+    const displayName = email.includes('aarav') ? 'Aarav Sharma' : email.split('@')[0].replace('.', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    const user = { email, name: displayName };
+    setCurrentUser(user);
+    localStorage.setItem('futura_current_user', JSON.stringify(user));
+    localStorage.setItem('futura_has_onboarded', 'true');
+    setHasCompletedOnboarding(true);
+    setCurrentRoute('dashboard');
+  };
+
+  const signOutUser = () => {
+    setCurrentUser(null);
+    localStorage.removeItem('futura_current_user');
+    setCurrentRoute('landing');
+  };
 
   // User Profile
   const [userProfile, setUserProfile] = useState<UserFinancialProfile>(() => {
@@ -500,6 +551,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     localStorage.removeItem('futura_monthly_budget');
     localStorage.removeItem('futura_budget_categories');
     localStorage.removeItem('futura_savings_goals');
+    localStorage.removeItem('futura_has_onboarded');
+    localStorage.removeItem('futura_current_user');
+    setHasCompletedOnboarding(false);
+    setCurrentUser(null);
+    setCurrentRoute('landing');
   };
 
   return (
@@ -511,6 +567,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setIsOnboardingOpen,
         isAppLauncherOpen,
         setIsAppLauncherOpen,
+        hasCompletedOnboarding,
+        setHasCompletedOnboarding,
+        isSignInOpen,
+        setIsSignInOpen,
+        currentUser,
+        signInUser,
+        signOutUser,
         userProfile,
         updateUserProfile,
         allocations,

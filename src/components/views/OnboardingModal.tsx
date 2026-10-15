@@ -23,7 +23,8 @@ export const OnboardingModal: React.FC = () => {
     userProfile, 
     updateUserProfile,
     navigateTo,
-    addActivity 
+    addActivity,
+    setHasCompletedOnboarding
   } = useApp();
 
   const [step, setStep] = useState<number>(1);
@@ -103,6 +104,8 @@ export const OnboardingModal: React.FC = () => {
       badge: 'New Plan',
     });
 
+    localStorage.setItem('futura_has_onboarded', 'true');
+    setHasCompletedOnboarding(true);
     setIsOnboardingOpen(false);
     navigateTo('dashboard');
   };

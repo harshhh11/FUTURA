@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Home, PiggyBank, User } from 'lucide-react';
+import { Home, Compass, PiggyBank, ShieldAlert, User } from 'lucide-react';
 import { ViewRoute } from '../../types/finance';
 import { sound } from '../../utils/sound';
 
@@ -8,23 +8,10 @@ interface BottomNavProps {
   isInsideFrame?: boolean;
 }
 
-// Custom Currency Cycle icon matching the 2nd icon in Image 2 / Image 3 (Circle with arrow & currency)
-const MoneyCycleIcon: React.FC<{ className?: string }> = ({ className = 'w-5 h-5' }) => (
-  <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-    <path d="M3 3v5h5" />
-    <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
-    <path d="M16 21h5v-5" />
-    {/* Centered currency stroke */}
-    <path d="M12 8v8" strokeWidth="1.8" />
-    <path d="M9.5 10c0-1.1.9-2 2.5-2s2.5.9 2.5 2c0 2-5 1.5-5 3.5 0 1.1.9 2 2.5 2s2.5-.9 2.5-2" strokeWidth="1.8" />
-  </svg>
-);
-
-export const BottomNav: React.FC<BottomNavProps> = ({ isInsideFrame = false }) => {
+export const BottomNav: React.FC<BottomNavProps> = () => {
   const { currentRoute, navigateTo, reducedMotion } = useApp();
 
-  // 4 iconic tabs exactly matching Image 2 & Image 3
+  // 5 iconic tabs matching Section 8: Home, Explore, Plan, Rehearse, Profile
   const tabs: { 
     id: string;
     route: ViewRoute; 
@@ -40,18 +27,25 @@ export const BottomNav: React.FC<BottomNavProps> = ({ isInsideFrame = false }) =
       altRoutes: ['landing']
     },
     { 
-      id: 'activity',
-      route: 'activity', 
-      label: 'Transactions', 
-      icon: MoneyCycleIcon,
-      altRoutes: ['balance', 'moneyflow']
+      id: 'explore',
+      route: 'explorer', 
+      label: 'Explore', 
+      icon: Compass,
+      altRoutes: ['portfolio', 'comparison']
     },
     { 
-      id: 'budget',
+      id: 'plan',
       route: 'budget', 
       label: 'Plan', 
       icon: PiggyBank,
-      altRoutes: ['simulator', 'portfolio', 'explorer', 'comparison', 'bad_year', 'recovery']
+      altRoutes: ['simulator', 'moneyflow', 'balance', 'activity']
+    },
+    { 
+      id: 'rehearse',
+      route: 'bad_year', 
+      label: 'Rehearse', 
+      icon: ShieldAlert,
+      altRoutes: ['recovery']
     },
     { 
       id: 'profile',
@@ -64,11 +58,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({ isInsideFrame = false }) =
 
   return (
     <div 
-      className={`${
-        isInsideFrame 
-          ? 'absolute inset-x-0 bottom-0 z-40' 
-          : 'md:hidden fixed inset-x-0 bottom-0 z-40'
-      } pointer-events-none select-none`}
+      className="md:hidden fixed inset-x-0 bottom-0 z-40 pointer-events-none select-none"
+      style={{
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+      }}
     >
       {/* 
         ========================================================================
@@ -80,14 +73,14 @@ export const BottomNav: React.FC<BottomNavProps> = ({ isInsideFrame = false }) =
         ========================================================================
       */}
       <div 
-        className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#07080A]/95 via-[#07080A]/75 to-transparent backdrop-blur-[6px] pointer-events-none"
+        className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#07080A]/95 via-[#07080A]/80 to-transparent backdrop-blur-[8px] pointer-events-none"
         aria-hidden="true"
       />
 
       {/* FLOATING CAPSULE PILL DOCK (Pointer-events-auto) */}
-      <div className="relative z-10 w-full flex items-center justify-center pb-3 pt-2 px-4 pointer-events-none">
+      <div className="relative z-10 w-full flex items-center justify-center pb-2.5 pt-1 px-4 pointer-events-none">
         <nav 
-          className={`w-full max-w-[320px] h-[58px] rounded-full bg-[#111319]/90 border border-[#2D313B]/85 backdrop-blur-2xl shadow-[0_12px_40px_rgba(0,0,0,0.9)] px-2.5 flex items-center justify-between gap-1 pointer-events-auto transition-transform duration-300 ${
+          className={`w-full max-w-[340px] h-[58px] rounded-full bg-[#111319]/90 border border-[#2D313B]/85 backdrop-blur-2xl shadow-[0_12px_40px_rgba(0,0,0,0.9)] px-2.5 flex items-center justify-between gap-1 pointer-events-auto transition-transform duration-300 ${
             reducedMotion ? '' : 'animate-fadeIn'
           }`}
           aria-label="Mobile Navigation"
