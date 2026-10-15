@@ -165,13 +165,13 @@ export const MobileAppSimulator: React.FC<MobileAppSimulatorProps> = ({ children
             </div>
 
             {/* SCREEN CONTENT */}
-            {isVaultHome ? (
-              /* THE REFERENCE 3D METALLIC CARD HOME SCREEN */
-              <div className="flex-1 overflow-hidden relative flex flex-col">
-                <FuturaCardHero onExplore={() => navigateTo('moneyflow')} />
+            {currentRoute === 'dashboard' ? (
+              /* THE REFERENCE CINEMATIC DASHBOARD (Screen 1) */
+              <div className="flex-1 overflow-y-auto px-4 py-3 pb-32 text-[#F4F1EA] scrollbar-none">
+                {children}
               </div>
             ) : (
-              /* IN-APP SUB-VIEWS (MoneyFlow, Goal Simulator, Portfolio, Rehearse, etc.) */
+              /* IN-APP SUB-VIEWS (Transactions, Budget, Portfolio, Settings, etc.) */
               <div className="flex-1 flex flex-col overflow-hidden relative">
                 {/* Mobile Sub-view Header */}
                 <div className="px-4 py-2.5 flex items-center justify-between border-b border-[#30343B]/60 bg-[#090A0C]/90 backdrop-blur-md z-30 shrink-0">
@@ -183,7 +183,7 @@ export const MobileAppSimulator: React.FC<MobileAppSimulatorProps> = ({ children
                     className="flex items-center space-x-1 text-xs text-[#A2A5AC] hover:text-[#F4F1EA] transition-colors cursor-pointer"
                   >
                     <ChevronLeft className="w-4 h-4 text-[#D5B477]" />
-                    <span>Vault</span>
+                    <span>Home</span>
                   </button>
 
                   <span className="font-display font-bold text-sm text-[#F4F1EA]">
@@ -222,16 +222,14 @@ export const MobileAppSimulator: React.FC<MobileAppSimulatorProps> = ({ children
                 </div>
 
                 {/* Scrollable View Content */}
-                <div className="flex-1 overflow-y-auto px-4 py-4 pb-28 text-[#F4F1EA] scrollbar-none">
+                <div className="flex-1 overflow-y-auto px-4 py-4 pb-32 text-[#F4F1EA] scrollbar-none">
                   {children}
                 </div>
               </div>
             )}
 
-            {/* PINNED 5-TAB BOTTOM NAVIGATION */}
-            <div className="absolute bottom-0 left-0 right-0 z-40 bg-[#090A0C]/95 backdrop-blur-lg border-t border-[#30343B]">
-              <BottomNav isInsideFrame={true} />
-            </div>
+            {/* TRANSLUCENT FLOATING BOTTOM NAVIGATION (Image 1 Source of Truth) */}
+            <BottomNav isInsideFrame={true} />
 
             {/* iOS Home Indicator Line */}
             <div className="absolute bottom-1 left-0 right-0 h-3 flex items-center justify-center z-40 pointer-events-none">

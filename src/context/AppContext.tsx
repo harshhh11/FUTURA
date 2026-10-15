@@ -150,13 +150,20 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [compactMode, setCompactMode] = useState<boolean>(false);
   const [deviceViewMode, setDeviceViewMode] = useState<'responsive' | 'mobile_frame'>('mobile_frame');
 
-  // Account & Category Balance Allocations (Image 2 - Cash, Investments, Reserve)
+  // Account & Category Balance Allocations (Screen 1 - Cash & Savings, Investments, Emergency Buffer)
   const [accountAllocations, setAccountAllocations] = useState<Record<'cash' | 'investments' | 'reserve', number>>(() => {
     try {
       const saved = localStorage.getItem('futura_account_allocations');
-      return saved ? JSON.parse(saved) : { cash: 2450, investments: 8000, reserve: 2000 };
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.cash === 2450 && parsed.investments === 8000) {
+          return { cash: 100000, investments: 235720, reserve: 21000 };
+        }
+        return parsed;
+      }
+      return { cash: 100000, investments: 235720, reserve: 21000 };
     } catch {
-      return { cash: 2450, investments: 8000, reserve: 2000 };
+      return { cash: 100000, investments: 235720, reserve: 21000 };
     }
   });
 
@@ -479,7 +486,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setCompletedLessonIds(['what-is-a-sip']);
     setMoneyFlowScenario('typical');
     setBadYearDeclinePct(20);
-    setAccountAllocations({ cash: 2450, investments: 8000, reserve: 2000 });
+    setAccountAllocations({ cash: 100000, investments: 235720, reserve: 21000 });
     setBalanceTransactions(INITIAL_BALANCE_TRANSACTIONS);
     setMonthlyBudget(10000);
     setBudgetCategories(INITIAL_BUDGET_CATEGORIES);

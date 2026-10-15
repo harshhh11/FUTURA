@@ -123,12 +123,14 @@ export interface BudgetCategoryItem {
 export interface BalanceTransaction {
   id: string;
   description: string;
-  category: 'Income' | 'Essentials' | 'Travel' | 'Investments' | 'Lifestyle';
+  subtitle?: string;
+  category: 'Contribution' | 'Savings' | 'Investment' | 'Goal' | 'Income' | 'Essentials' | 'Lifestyle' | string;
   amount: number; // positive for income, negative for expense/contribution
   type: 'Income' | 'Expense' | 'Contribution';
-  dateLabel: 'Today' | 'Yesterday' | 'Earlier this month';
+  dateLabel: string;
   timestamp: string;
   merchant?: string;
+  iconType?: 'contribution' | 'food' | 'income' | 'transfer' | 'study' | string;
 }
 
 export interface AccountAllocation {

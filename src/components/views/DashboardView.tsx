@@ -1,498 +1,510 @@
-import React from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
+import { formatINR } from '../../utils/calculations';
+import { sound } from '../../utils/sound';
 import { 
-  formatINR, 
-  estimateTimeToGoal, 
-  generateProjectionSeries 
-} from '../../utils/calculations';
-import { 
+  Eye, 
+  EyeOff, 
+  Bell, 
+  ChevronRight, 
+  TrendingUp, 
+  Wallet, 
+  Shield, 
   Target, 
-  ArrowRight, 
-  Layers, 
-  Compass, 
-  ShieldAlert, 
-  Sparkles, 
-  CheckCircle2, 
-  PieChart, 
-  TrendingUp,
-  SlidersHorizontal,
-  ChevronRight,
-  BookOpen
+  Sparkles,
+  ArrowUpRight,
+  ChevronDown
 } from 'lucide-react';
-import { Concept2MilestoneCard } from './Concept2MilestoneCard';
 
 export const DashboardView: React.FC = () => {
-  const { userProfile, allocations, navigateTo, setIsOnboardingOpen } = useApp();
+  const { 
+    userProfile, 
+    accountAllocations, 
+    navigateTo, 
+    setIsAppLauncherOpen,
+    reducedMotion 
+  } = useApp();
 
-  // Cash flow metrics
-  const income = userProfile.monthlyIncome;
-  const essentials = userProfile.essentialExpenses;
-  const discretionary = userProfile.otherSpending;
-  const plannedSip = userProfile.comfortableMonthlyContribution;
-  const availableAmount = Math.max(0, income - essentials - discretionary);
-  const remainingBuffer = Math.max(0, availableAmount - plannedSip);
+  // Local UI State
+  const [showWealth, setShowWealth] = useState<boolean>(true);
+  const [chartTimeframe, setChartTimeframe] = useState<'Monthly' | 'Quarterly' | 'Annual' | '1Y'>('Monthly');
+  const [selectedMonthIndex, setSelectedMonthIndex] = useState<number>(6); // Default: Jul (last)
+  const [isChartAnimated, setIsChartAnimated] = useState<boolean>(false);
 
-  // Growth & timeline metrics
-  const returnRate = userProfile.riskTolerance === 'stability' ? 0.07 : (userProfile.riskTolerance === 'growth' ? 0.12 : 0.105);
-  const timeEstimate = estimateTimeToGoal(
-    userProfile.goalTargetAmount,
-    userProfile.currentSavings,
-    plannedSip,
-    returnRate
-  );
-  const progressPct = Math.min(100, Math.max(1.2, (userProfile.currentSavings / userProfile.goalTargetAmount) * 100));
+  // Trigger chart entrance animation
+  useEffect(() => {
+    if (reducedMotion) {
+      setIsChartAnimated(true);
+      return;
+    }
+    const timer = setTimeout(() => setIsChartAnimated(true), 150);
+    return () => clearTimeout(timer);
+  }, [reducedMotion]);
 
-  // Concept 5 Performance Mountain Curve calculation
-  const projectionSeries = generateProjectionSeries(
-    userProfile.currentSavings,
-    plannedSip,
-    returnRate,
-    userProfile.goalTargetYears || 15
-  );
+  // Aggregate Total Wealth
+  const totalWealth = useMemo(() => {
+    return (accountAllocations.cash || 0) + (accountAllocations.investments || 0) + (accountAllocations.reserve || 0);
+  }, [accountAllocations]);
 
-  const chartWidth = 600;
-  const chartHeight = 190;
-  const paddingX = 24;
-  const paddingBottom = 30;
-  const paddingTop = 20;
+  const cashPct = totalWealth > 0 ? Math.round((accountAllocations.cash / totalWealth) * 100) : 28;
+  const invPct = totalWealth > 0 ? Math.round((accountAllocations.investments / totalWealth) * 100) : 66;
+  const reservePct = totalWealth > 0 ? Math.round((accountAllocations.reserve / totalWealth) * 100) : 6;
 
-  const maxVal = Math.max(
-    userProfile.goalTargetAmount * 1.15,
-    projectionSeries[projectionSeries.length - 1]?.projectedValue || 1000000
-  );
+  // Monthly Portfolio Growth Series (Matching Screen 1 Mountain Curve)
+  const monthlyData = [
+    { month: 'Jan', value: 240000, returnPct: '+5.2%' },
+    { month: 'Feb', value: 255000, returnPct: '+6.8%' },
+    { month: 'Mar', value: 248000, returnPct: '+5.9%' },
+    { month: 'Apr', value: 275000, returnPct: '+8.4%' },
+    { month: 'May', value: 320000, returnPct: '+10.6%' },
+    { month: 'Jun', value: 310000, returnPct: '+9.8%' },
+    { month: 'Jul', value: totalWealth, returnPct: '+12.4%' },
+  ];
 
-  const pointsProjected = projectionSeries.map((p, i) => {
-    const x = paddingX + (i / (projectionSeries.length - 1)) * (chartWidth - paddingX * 2);
-    const y = (chartHeight - paddingBottom) - (p.projectedValue / maxVal) * (chartHeight - paddingBottom - paddingTop);
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  // SVG Chart Geometry
+  const chartWidth = 320;
+  const chartHeight = 130;
+  const paddingX = 20;
+  const paddingTop = 25;
+  const paddingBottom = 25;
+
+  const minVal = 210000;
+  const maxVal = 380000;
+
+  const points = monthlyData.map((d, i) => {
+    const x = paddingX + (i / (monthlyData.length - 1)) * (chartWidth - paddingX * 2);
+    const y = (chartHeight - paddingBottom) - ((d.value - minVal) / (maxVal - minVal)) * (chartHeight - paddingTop - paddingBottom);
+    return { x, y, data: d };
   });
 
-  const pointsContributed = projectionSeries.map((p, i) => {
-    const x = paddingX + (i / (projectionSeries.length - 1)) * (chartWidth - paddingX * 2);
-    const y = (chartHeight - paddingBottom) - (p.totalContributed / maxVal) * (chartHeight - paddingBottom - paddingTop);
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  });
+  // Smooth bezier curve path
+  const curvePath = useMemo(() => {
+    if (points.length === 0) return '';
+    let d = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 0; i < points.length - 1; i++) {
+      const p0 = points[i];
+      const p1 = points[i + 1];
+      const cx1 = p0.x + (p1.x - p0.x) * 0.45;
+      const cy1 = p0.y;
+      const cx2 = p1.x - (p1.x - p0.x) * 0.45;
+      const cy2 = p1.y;
+      d += ` C ${cx1} ${cy1}, ${cx2} ${cy2}, ${p1.x} ${p1.y}`;
+    }
+    return d;
+  }, [points]);
 
-  const areaProjected = [
-    `${paddingX},${chartHeight - paddingBottom}`,
-    ...pointsProjected,
-    `${chartWidth - paddingX},${chartHeight - paddingBottom}`
-  ].join(' ');
+  const areaPath = useMemo(() => {
+    if (!curvePath || points.length === 0) return '';
+    const lastX = points[points.length - 1].x;
+    const firstX = points[0].x;
+    const bottomY = chartHeight - paddingBottom + 5;
+    return `${curvePath} L ${lastX} ${bottomY} L ${firstX} ${bottomY} Z`;
+  }, [curvePath, points, chartHeight, paddingBottom]);
 
-  const targetLineY = (chartHeight - paddingBottom) - (userProfile.goalTargetAmount / maxVal) * (chartHeight - paddingBottom - paddingTop);
+  const activePoint = points[selectedMonthIndex] || points[points.length - 1];
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8 animate-fadeIn pb-16 w-full">
-      {/* 1. WELCOME & PROFILE SUMMARY HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center space-x-2 text-xs font-mono text-[#A2A5AC] uppercase tracking-wider mb-1">
-            <span>FUTURA FINANCIAL OS</span>
-            <span>·</span>
-            <span className="text-[#D5B477]">ACTIVE SIMULATION</span>
+    <div className="w-full max-w-md mx-auto space-y-4 sm:space-y-5 animate-fadeIn pb-32 text-[#F4F1EA] select-none">
+      
+      {/* 1. TOP PROFILE GREETING & NOTIFICATION HEADER (Screen 1 Source of Truth) */}
+      <div className="flex items-center justify-between pt-1">
+        <div className="flex items-center space-x-3">
+          {/* Avatar with subtle gold ring */}
+          <div className="w-10 h-10 rounded-full p-[1.5px] bg-gradient-to-tr from-[#D5B477]/80 via-[#CAD2DC]/40 to-transparent shadow-md">
+            <div className="w-full h-full rounded-full overflow-hidden bg-[#16181F]">
+              <img 
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" 
+                alt="Aarav"
+                className="w-full h-full object-cover" 
+              />
+            </div>
           </div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#F4F1EA] tracking-tight">
-            Hello, {userProfile.name.split(' ')[0]}!
-          </h1>
-          <p className="text-xs sm:text-sm text-[#A2A5AC] mt-1 max-w-2xl leading-relaxed">
-            19-year-old student · <span className="text-[#F4F1EA] font-mono font-medium">{formatINR(income)}/mo</span> allowance · 
-            Working toward <span className="text-[#D5B477] font-semibold">{userProfile.goalName}</span> with disciplined monthly contributions.
-          </p>
+
+          <div>
+            <h1 className="font-display font-bold text-sm sm:text-base text-[#F4F1EA] leading-tight">
+              Hello, {userProfile?.name ? userProfile.name.split(' ')[0] : 'Aarav'}!
+            </h1>
+            <p className="text-[11px] text-[#8E929C] flex items-center space-x-1 mt-0.5">
+              <span>Keep building</span>
+              <span className="text-xs">✌️</span>
+            </p>
+          </div>
         </div>
 
-        <button
-          onClick={() => setIsOnboardingOpen(true)}
-          className="self-start sm:self-auto px-4 py-2 rounded-xl text-xs font-semibold bg-[#171A20] hover:bg-[#20242B] border border-[#30343B] text-[#F4F1EA] transition-all flex items-center space-x-2 shrink-0 group hover:border-[#D5B477]/50 cursor-pointer shadow-sm"
+        {/* Top Right Controls: Notification Bell + 4-Square Grid Launcher Button */}
+        <div className="flex items-center space-x-2">
+          {/* Notification Bell with red dot */}
+          <button
+            onClick={() => sound.playClick()}
+            className="w-9 h-9 rounded-2xl bg-[#14161C] hover:bg-[#1C1F26] border border-[#2D313B] flex items-center justify-center text-[#A2A5AC] hover:text-[#F4F1EA] relative transition-all active:scale-95 cursor-pointer shadow-sm"
+            title="Notifications"
+            aria-label="Notifications"
+          >
+            <Bell className="w-4 h-4" />
+            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#E27D78] ring-2 ring-[#14161C]" />
+          </button>
+
+          {/* 4-Square Grid Launcher Icon Button [::] */}
+          <button
+            onClick={() => {
+              sound.playChime();
+              setIsAppLauncherOpen(true);
+            }}
+            className="w-9 h-9 rounded-2xl bg-[#1C1F26] hover:bg-[#252932] border border-[#30343B] hover:border-[#D5B477]/50 flex items-center justify-center text-white/90 active:scale-95 transition-all shadow-sm group cursor-pointer"
+            title="Open Navigation Menu"
+            aria-label="Open navigation menu"
+          >
+            <div className="grid grid-cols-2 gap-[2.5px] w-3.5 h-3.5 group-hover:scale-105 transition-transform">
+              <div className="w-1.5 h-1.5 rounded-[1.5px] bg-[#F4F1EA]" />
+              <div className="w-1.5 h-1.5 rounded-[1.5px] bg-[#F4F1EA]" />
+              <div className="w-1.5 h-1.5 rounded-[1.5px] bg-[#F4F1EA]" />
+              <div className="w-1.5 h-1.5 rounded-[1.5px] bg-[#F4F1EA]" />
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* 2. TOTAL WEALTH & METALLIC CARD AREA (Exact Screen 1 Reference) */}
+      <div className="pt-2 pb-1 flex items-center justify-between">
+        {/* Left Column: Wealth Metrics */}
+        <div className="space-y-1">
+          <div className="flex items-center space-x-1.5 text-xs text-[#8E929C]">
+            <span className="tracking-tight">Total Wealth (Simulated)</span>
+            <button
+              onClick={() => {
+                sound.playClick();
+                setShowWealth(!showWealth);
+              }}
+              className="text-[#8E929C] hover:text-[#D5B477] transition-colors cursor-pointer"
+              title={showWealth ? 'Hide balance' : 'Show balance'}
+            >
+              {showWealth ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 text-[#D5B477]" />}
+            </button>
+          </div>
+
+          <div className="font-display font-extrabold text-3xl sm:text-[34px] tracking-tight text-[#F4F1EA] leading-tight">
+            {showWealth ? formatINR(totalWealth) : '••••••••'}
+          </div>
+
+          <div className="flex items-center space-x-1.5 text-xs font-mono font-medium pt-0.5">
+            <span className="text-[#8BC6A1] flex items-center">
+              <span>↑</span>
+              <span className="ml-0.5">+12.4%</span>
+            </span>
+            <span className="text-[#D5B477]">+₹39,450 this year</span>
+          </div>
+        </div>
+
+        {/* Right Column: Mini Floating Metallic 3D Silver Card */}
+        <div 
+          onClick={() => {
+            sound.playChime();
+            navigateTo('balance');
+          }}
+          className="relative w-28 h-20 cursor-pointer group shrink-0"
+          title="FUTURA Metallic Vault Card"
         >
-          <Sparkles className="w-3.5 h-3.5 text-[#D5B477] group-hover:rotate-12 transition-transform" />
-          <span>Adjust Baseline</span>
-        </button>
-      </div>
+          {/* Subtle Ambient Glow */}
+          <div className="absolute inset-0 bg-[#D5B477]/10 blur-xl rounded-full group-hover:bg-[#D5B477]/20 transition-all pointer-events-none" />
 
-      {/* 2. PRIMARY GOAL & CONCEPT 2 MILESTONE VAULT (Dual Desktop Grid / Mobile Stack) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        {/* Left Column: Primary Milestone Overview */}
-        <div className="lg:col-span-7 p-6 sm:p-7 rounded-3xl bg-gradient-to-br from-[#20242B] via-[#171A20] to-[#101216] border border-[#30343B] shadow-card-depth flex flex-col justify-between space-y-6">
-          <div className="space-y-4">
-            {/* Top Header of Goal Card */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="space-y-1.5">
-                <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#090A0C] border border-[#30343B] text-[10px] font-mono text-[#D5B477]">
-                  <Target className="w-3 h-3" />
-                  <span>PRIMARY FINANCIAL MILESTONE</span>
-                </div>
-                <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#F4F1EA] tracking-tight">
-                  {userProfile.goalName}
-                </h2>
-              </div>
-
-              <div className="flex items-center space-x-3 self-start sm:self-auto">
-                {/* Circular Progress Badge */}
-                <div className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-[#090A0C] border border-[#30343B]">
-                  <div className="w-5 h-5 relative flex items-center justify-center">
-                    <svg className="w-full h-full transform -rotate-90">
-                      <circle cx="10" cy="10" r="8" stroke="#20242B" strokeWidth="2.5" fill="transparent" />
-                      <circle cx="10" cy="10" r="8" stroke="#D5B477" strokeWidth="2.5" strokeDasharray={50} strokeDashoffset={50 - (50 * progressPct) / 100} strokeLinecap="round" fill="transparent" />
-                    </svg>
-                  </div>
-                  <span className="text-xs font-mono font-bold text-[#F4F1EA]">{progressPct.toFixed(1)}%</span>
-                </div>
-
-                <button
-                  onClick={() => navigateTo('simulator')}
-                  className="px-4 py-2.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-[#D5B477] to-[#E5C68A] text-[#090A0C] hover:shadow-subtle-glow hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center space-x-1.5 cursor-pointer shadow-sm"
-                >
-                  <span>Review Plan</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-
-            {/* 3 Prominent Metrics Spanning Full Card Width */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-              <div className="p-3.5 rounded-2xl bg-[#090A0C]/80 border border-[#30343B]/80 flex flex-col justify-between space-y-1.5">
-                <span className="text-[10px] text-[#A2A5AC] font-mono uppercase tracking-wider block">
-                  Target Amount
-                </span>
-                <p className="text-lg sm:text-xl font-mono font-bold text-[#F4F1EA] tracking-tight">
-                  {formatINR(userProfile.goalTargetAmount)}
-                </p>
-                <p className="text-[11px] text-[#A2A5AC] font-normal">
-                  15-Year Horizon
-                </p>
-              </div>
-
-              <div className="p-3.5 rounded-2xl bg-[#090A0C]/80 border border-[#30343B]/80 flex flex-col justify-between space-y-1.5">
-                <span className="text-[10px] text-[#A2A5AC] font-mono uppercase tracking-wider block">
-                  Current Savings
-                </span>
-                <p className="text-lg sm:text-xl font-mono font-bold text-[#8BC6A1] tracking-tight">
-                  {formatINR(userProfile.currentSavings)}
-                </p>
-                <p className="text-[11px] text-[#8BC6A1]">
-                  Student Baseline
-                </p>
-              </div>
-
-              <div className="p-3.5 rounded-2xl bg-[#090A0C]/80 border border-[#30343B]/80 flex flex-col justify-between space-y-1.5">
-                <span className="text-[10px] text-[#A2A5AC] font-mono uppercase tracking-wider block">
-                  Timeline
-                </span>
-                <p className="text-lg sm:text-xl font-mono font-bold text-[#D5B477] tracking-tight">
-                  {timeEstimate.years} Years
-                </p>
-                <p className="text-[11px] text-[#A2A5AC] font-normal">
-                  ~10.5% Annual
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Linear Progress Bar with Clean Non-Overlapping Labels */}
-          <div className="space-y-2 pt-2 border-t border-[#30343B]/60">
-            <div className="flex items-center justify-between text-xs font-mono text-[#A2A5AC]">
-              <span>Accumulated: <strong className="text-[#8BC6A1]">{formatINR(userProfile.currentSavings)}</strong></span>
-              <span>Target: <strong className="text-[#F4F1EA]">{formatINR(userProfile.goalTargetAmount)}</strong></span>
-            </div>
-            <div className="w-full h-2.5 rounded-full bg-[#090A0C] overflow-hidden p-0.5 border border-[#30343B]">
-              <div 
-                className="h-full rounded-full bg-gradient-to-r from-[#D5B477] to-[#8BC6A1] transition-all duration-700"
-                style={{ width: `${Math.max(2, progressPct)}%` }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: 3D Concept 2 Milestone Metallic Card */}
-        <div className="lg:col-span-5 flex">
-          <Concept2MilestoneCard className="w-full h-full" />
-        </div>
-      </div>
-
-      {/* 3. MONEYFLOW SUMMARY CARD (5 Columns - Clean Responsive Grid) */}
-      <div className="p-6 sm:p-7 rounded-3xl bg-[#171A20] border border-[#30343B] space-y-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center space-x-2.5">
-            <div className="p-2 rounded-xl bg-[#20242B] border border-[#30343B] text-[#D5B477]">
-              <Layers className="w-4 h-4" />
-            </div>
-            <div>
-              <h3 className="font-display text-base sm:text-lg font-bold text-[#F4F1EA]">
-                Monthly MoneyFlow Breakdown
-              </h3>
-              <p className="text-xs text-[#A2A5AC]">
-                Real student cashflow: Every single rupee accounted for with zero leakage.
-              </p>
-            </div>
-          </div>
-
-          <button
-            onClick={() => navigateTo('moneyflow')}
-            className="self-start sm:self-auto px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#20242B] hover:bg-[#2A2F3B] border border-[#30343B] hover:border-[#D5B477]/40 text-[#F4F1EA] transition-all flex items-center space-x-1.5 cursor-pointer"
+          {/* Diagonally Angled Card Body */}
+          <div 
+            className="w-full h-full rounded-xl p-2 relative overflow-hidden transition-all duration-300 group-hover:scale-105 group-hover:rotate-[-4deg]"
+            style={{
+              transform: 'rotate(-7deg) skewX(-2deg)',
+              background: 'linear-gradient(135deg, #F0F4F8 0%, #D4DDE8 28%, #A8B4C2 40%, #171A21 41%, #0A0C10 75%, #050608 100%)',
+              boxShadow: '0 12px 25px -5px rgba(0,0,0,0.85), inset 0 1px 1px rgba(255,255,255,0.7), 0 0 0 1px rgba(255,255,255,0.2)'
+            }}
           >
-            <span>Adjust MoneyFlow</span>
-            <ChevronRight className="w-3.5 h-3.5 text-[#D5B477]" />
-          </button>
-        </div>
+            {/* Razor-sharp diagonal reflection seam */}
+            <div 
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.8) 40%, rgba(0,0,0,0.6) 41%, transparent 70%)'
+              }}
+            />
 
-        {/* 5-Column MoneyFlow Grid with Ample Breathing Room */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
-          <div className="p-4 rounded-2xl bg-[#101216] border border-[#30343B] space-y-1">
-            <span className="text-[10px] text-[#A2A5AC] font-mono uppercase tracking-wider block">1. Monthly Income</span>
-            <p className="text-lg font-mono font-bold text-[#F4F1EA]">
-              {formatINR(income)}
-            </p>
-            <p className="text-[11px] text-[#A2A5AC]">Stipend / Allowance</p>
-          </div>
+            <div className="relative z-10 w-full h-full flex flex-col justify-between text-[8px] text-white/90">
+              <div className="flex items-center justify-between font-display font-bold uppercase tracking-wider text-[9px]">
+                <span>FUTURA</span>
+              </div>
 
-          <div className="p-4 rounded-2xl bg-[#101216] border border-[#30343B] space-y-1">
-            <span className="text-[10px] text-[#A2A5AC] font-mono uppercase tracking-wider block">2. Essentials</span>
-            <p className="text-lg font-mono font-bold text-[#A9B8C8]">
-              {formatINR(essentials)}
-            </p>
-            <p className="text-[11px] text-[#A2A5AC]">Canteen, Books, Transit</p>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-[#101216] border border-[#30343B] space-y-1">
-            <span className="text-[10px] text-[#A2A5AC] font-mono uppercase tracking-wider block">3. Discretionary</span>
-            <p className="text-lg font-mono font-bold text-[#A2A5AC]">
-              {formatINR(discretionary)}
-            </p>
-            <p className="text-[11px] text-[#A2A5AC]">Campus Life & Hobbies</p>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-[#101216] border border-[#D5B477]/40 shadow-sm space-y-1">
-            <span className="text-[10px] text-[#D5B477] font-mono uppercase tracking-wider block">4. Planned SIP</span>
-            <p className="text-lg font-mono font-bold text-[#D5B477]">
-              {formatINR(plannedSip)}/mo
-            </p>
-            <p className="text-[11px] text-[#D5B477]/80">Disciplined Growth</p>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-[#101216] border border-[#30343B] space-y-1 col-span-1 sm:col-span-2 lg:col-span-1">
-            <span className="text-[10px] text-[#8BC6A1] font-mono uppercase tracking-wider block">5. Buffer Cushion</span>
-            <p className="text-lg font-mono font-bold text-[#8BC6A1]">
-              {formatINR(remainingBuffer)}
-            </p>
-            <p className="text-[11px] text-[#8BC6A1]/80">Balanced Equation</p>
-          </div>
-        </div>
-
-        {/* Narrative Callout */}
-        <div className="p-4 rounded-2xl bg-[#101216] border border-[#30343B]/80 text-xs sm:text-sm text-[#F4F1EA] leading-relaxed flex items-start space-x-3">
-          <CheckCircle2 className="w-5 h-5 text-[#8BC6A1] shrink-0 mt-0.5" />
-          <div className="space-y-1">
-            <p className="font-medium">
-              You allocate <span className="text-[#D5B477] font-mono font-bold">{formatINR(plannedSip)}</span> every month into your growth plan from your <span className="text-[#F4F1EA] font-mono font-bold">{formatINR(income)}</span> monthly cash.
-            </p>
-            <p className="text-xs text-[#A2A5AC]">
-              Essential living expenses (<span className="text-[#F4F1EA] font-mono">{formatINR(essentials)}</span>) and discretionary spending (<span className="text-[#F4F1EA] font-mono">{formatINR(discretionary)}</span>) are fully protected with zero over-allocation danger.
-            </p>
+              {/* EMV chip */}
+              <div className="w-5 h-3.5 rounded-sm bg-gradient-to-br from-[#E2E6EC] to-[#757E8C] border border-white/40 shadow-xs" />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* 4. PORTFOLIO OVERVIEW CARD (50% / 20% / 30% + Concept 5 Curve) */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-[#20242B] to-[#171A20] border border-[#30343B] shadow-card-depth space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center space-x-2">
-              <PieChart className="w-4 h-4 text-[#D5B477]" />
-              <h3 className="font-display text-base sm:text-lg font-bold text-[#F4F1EA]">
-                Portfolio Allocation & Multi-Year Projection
-              </h3>
+      {/* 3. THREE FINANCIAL CATEGORY CARDS (Screen 1 3-Column Responsive Grid) */}
+      <div className="grid grid-cols-3 gap-2.5">
+        {/* Card 1: Cash & Savings */}
+        <div
+          onClick={() => {
+            sound.playClick();
+            navigateTo('balance');
+          }}
+          className="p-3 rounded-2xl bg-gradient-to-b from-[#1C1F26] to-[#12141A] border border-[#2D313B] hover:border-[#D5B477]/50 transition-all cursor-pointer shadow-md group flex flex-col justify-between min-h-[110px]"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-7 h-7 rounded-xl bg-[#242832] flex items-center justify-center text-[#D5B477] shadow-inner">
+              <Wallet className="w-3.5 h-3.5" />
             </div>
-            <p className="text-xs text-[#A2A5AC]">
-              Diversified student asset allocation model designed for balanced compounding and downside protection.
-            </p>
+            <ChevronRight className="w-3 h-3 text-[#5A5F6D] group-hover:text-[#D5B477] transition-colors" />
           </div>
 
+          <div>
+            <span className="block text-[10px] text-[#8E929C] font-medium leading-tight">
+              Cash & Savings
+            </span>
+            <span className="block font-mono font-bold text-xs sm:text-sm text-[#F4F1EA] mt-0.5">
+              {showWealth ? formatINR(accountAllocations.cash || 100000) : '••••'}
+            </span>
+            <span className="block text-[9px] text-[#6E7380] font-mono mt-0.5">
+              {cashPct}% of total
+            </span>
+          </div>
+        </div>
+
+        {/* Card 2: Investments */}
+        <div
+          onClick={() => {
+            sound.playClick();
+            navigateTo('portfolio');
+          }}
+          className="p-3 rounded-2xl bg-gradient-to-b from-[#1C1F26] to-[#12141A] border border-[#2D313B] hover:border-[#D5B477]/50 transition-all cursor-pointer shadow-md group flex flex-col justify-between min-h-[110px]"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-7 h-7 rounded-xl bg-[#242832] flex items-center justify-center text-[#D5B477] shadow-inner">
+              <TrendingUp className="w-3.5 h-3.5" />
+            </div>
+            <ChevronRight className="w-3 h-3 text-[#5A5F6D] group-hover:text-[#D5B477] transition-colors" />
+          </div>
+
+          <div>
+            <span className="block text-[10px] text-[#8E929C] font-medium leading-tight">
+              Investments
+            </span>
+            <span className="block font-mono font-bold text-xs sm:text-sm text-[#F4F1EA] mt-0.5">
+              {showWealth ? formatINR(accountAllocations.investments || 235720) : '••••'}
+            </span>
+            <span className="block text-[9px] text-[#6E7380] font-mono mt-0.5">
+              {invPct}% of total
+            </span>
+          </div>
+        </div>
+
+        {/* Card 3: Emergency Buffer */}
+        <div
+          onClick={() => {
+            sound.playClick();
+            navigateTo('bad_year');
+          }}
+          className="p-3 rounded-2xl bg-gradient-to-b from-[#1C1F26] to-[#12141A] border border-[#2D313B] hover:border-[#D5B477]/50 transition-all cursor-pointer shadow-md group flex flex-col justify-between min-h-[110px]"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-7 h-7 rounded-xl bg-[#242832] flex items-center justify-center text-[#D5B477] shadow-inner">
+              <Shield className="w-3.5 h-3.5" />
+            </div>
+            <ChevronRight className="w-3 h-3 text-[#5A5F6D] group-hover:text-[#D5B477] transition-colors" />
+          </div>
+
+          <div>
+            <span className="block text-[10px] text-[#8E929C] font-medium leading-tight">
+              Emergency Buffer
+            </span>
+            <span className="block font-mono font-bold text-xs sm:text-sm text-[#F4F1EA] mt-0.5">
+              {showWealth ? formatINR(accountAllocations.reserve || 21000) : '••••'}
+            </span>
+            <span className="block text-[9px] text-[#6E7380] font-mono mt-0.5">
+              {reservePct}% of total
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. PORTFOLIO GROWTH SECTION (Golden Mountain Curve with Live Tooltip) */}
+      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-b from-[#171A21] to-[#0E1015] border border-[#2D313B] shadow-card-depth space-y-3">
+        {/* Section Header */}
+        <div className="flex items-center justify-between">
           <button
-            onClick={() => navigateTo('portfolio')}
-            className="self-start sm:self-auto px-4 py-2 rounded-xl text-xs font-semibold bg-[#20242B] hover:bg-[#2A2F3B] border border-[#30343B] hover:border-[#D5B477]/40 text-[#F4F1EA] transition-all flex items-center space-x-2 cursor-pointer"
+            onClick={() => {
+              sound.playClick();
+              navigateTo('portfolio');
+            }}
+            className="flex items-center space-x-1 group cursor-pointer text-left"
           >
-            <SlidersHorizontal className="w-3.5 h-3.5 text-[#D5B477]" />
-            <span>Build Portfolio</span>
+            <span className="font-display font-bold text-sm sm:text-base text-[#F4F1EA] group-hover:text-[#D5B477] transition-colors">
+              Portfolio Growth
+            </span>
+            <ChevronRight className="w-3.5 h-3.5 text-[#8E929C] group-hover:text-[#D5B477] transition-transform group-hover:translate-x-0.5" />
           </button>
-        </div>
 
-        {/* 3 Core Asset Allocation Chips */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-          <div className="p-4 rounded-2xl bg-[#101216] border border-[#D5B477]/30 flex items-center justify-between">
-            <div>
-              <span className="text-[10px] text-[#A2A5AC] font-mono uppercase">Equity Engine</span>
-              <p className="text-sm font-bold text-[#F4F1EA] mt-0.5">Nifty 50 Index Fund</p>
-              <p className="text-xs text-[#D5B477] font-mono mt-0.5">{formatINR(plannedSip * 0.50)}/month</p>
-            </div>
-            <span className="text-2xl font-mono font-extrabold text-[#D5B477]">50%</span>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-[#101216] border border-[#E5C68A]/30 flex items-center justify-between">
-            <div>
-              <span className="text-[10px] text-[#A2A5AC] font-mono uppercase">Inflation Hedge</span>
-              <p className="text-sm font-bold text-[#F4F1EA] mt-0.5">Gold ETF</p>
-              <p className="text-xs text-[#E5C68A] font-mono mt-0.5">{formatINR(plannedSip * 0.20)}/month</p>
-            </div>
-            <span className="text-2xl font-mono font-extrabold text-[#E5C68A]">20%</span>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-[#101216] border border-[#8BC6A1]/30 flex items-center justify-between">
-            <div>
-              <span className="text-[10px] text-[#A2A5AC] font-mono uppercase">Safety Foundation</span>
-              <p className="text-sm font-bold text-[#F4F1EA] mt-0.5">Fixed Deposit (FD)</p>
-              <p className="text-xs text-[#8BC6A1] font-mono mt-0.5">{formatINR(plannedSip * 0.30)}/month</p>
-            </div>
-            <span className="text-2xl font-mono font-extrabold text-[#8BC6A1]">30%</span>
+          {/* Timeframe Selector Pill */}
+          <div className="relative">
+            <button
+              onClick={() => {
+                sound.playClick();
+                setChartTimeframe(prev => prev === 'Monthly' ? 'Quarterly' : prev === 'Quarterly' ? 'Annual' : 'Monthly');
+              }}
+              className="px-2.5 py-1 rounded-full bg-[#12141A] border border-[#30343B] text-[10px] font-mono text-[#CAD2DC] hover:text-[#F4F1EA] flex items-center space-x-1 transition-colors cursor-pointer"
+            >
+              <span>{chartTimeframe}</span>
+              <ChevronDown className="w-3 h-3 text-[#8E929C]" />
+            </button>
           </div>
         </div>
 
-        {/* CONCEPT 5-INSPIRED PERFORMANCE MOUNTAIN CURVE */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-[#101216] border border-[#30343B] space-y-3">
-          <div className="flex items-center justify-between text-xs font-mono">
-            <div className="flex items-center space-x-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#D5B477]" />
-              <span className="text-[#F4F1EA] font-medium">Compounded Trajectory</span>
-              <span className="text-[#A2A5AC] hidden sm:inline">(~10.5% Annualized)</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#8BC6A1]" />
-              <span className="text-[#8BC6A1]">Target: ₹10 Lakhs</span>
-            </div>
-          </div>
+        {/* SVG Curve Chart */}
+        <div className="relative w-full h-[145px] pt-1">
+          <svg 
+            viewBox={`0 0 ${chartWidth} ${chartHeight}`} 
+            className="w-full h-full overflow-visible"
+          >
+            <defs>
+              {/* Golden Mountain Area Gradient */}
+              <linearGradient id="goldMountainGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#D5B477" stopOpacity="0.22" />
+                <stop offset="60%" stopColor="#D5B477" stopOpacity="0.05" />
+                <stop offset="100%" stopColor="#D5B477" stopOpacity="0.0" />
+              </linearGradient>
 
-          <div className="w-full h-52 sm:h-60 relative overflow-hidden">
-            <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="w-full h-full overflow-hidden">
-              <defs>
-                <linearGradient id="curveGoldGlow" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#D5B477" stopOpacity="0.35" />
-                  <stop offset="50%" stopColor="#D5B477" stopOpacity="0.10" />
-                  <stop offset="100%" stopColor="#D5B477" stopOpacity="0.00" />
-                </linearGradient>
-              </defs>
+              {/* Glowing Line Shadow Filter */}
+              <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
 
-              {/* Grid Horizontal Guide Lines */}
-              <line x1={paddingX} y1={chartHeight * 0.25} x2={chartWidth - paddingX} y2={chartHeight * 0.25} stroke="#30343B" strokeDasharray="3 3" opacity="0.3" />
-              <line x1={paddingX} y1={chartHeight * 0.50} x2={chartWidth - paddingX} y2={chartHeight * 0.50} stroke="#30343B" strokeDasharray="3 3" opacity="0.3" />
-              <line x1={paddingX} y1={chartHeight * 0.75} x2={chartWidth - paddingX} y2={chartHeight * 0.75} stroke="#30343B" strokeDasharray="3 3" opacity="0.3" />
-
-              {/* Shaded Area */}
-              <polygon points={areaProjected} fill="url(#curveGoldGlow)" />
-
-              {/* Milestone Target Line (₹10 Lakhs) */}
-              <line 
-                x1={paddingX} 
-                y1={targetLineY} 
-                x2={chartWidth - paddingX} 
-                y2={targetLineY} 
-                stroke="#8BC6A1" 
-                strokeWidth="1.5" 
-                strokeDasharray="4 3" 
-                opacity="0.8" 
+            {/* Subtle Vertical Grid Lines */}
+            {points.map((p, idx) => (
+              <line
+                key={`grid-${idx}`}
+                x1={p.x}
+                y1={paddingTop - 5}
+                x2={p.x}
+                y2={chartHeight - paddingBottom + 5}
+                stroke="#252932"
+                strokeWidth="0.8"
+                strokeDasharray="2 2"
               />
+            ))}
 
-              {/* Deposited Cash Baseline Line */}
-              <polyline points={pointsContributed.join(' ')} fill="none" stroke="#A9B8C8" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.6" />
+            {/* Gradient Fill under Mountain Curve */}
+            <path
+              d={areaPath}
+              fill="url(#goldMountainGradient)"
+              className={`transition-opacity duration-700 ${
+                isChartAnimated ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
 
-              {/* Compounding Curve Line */}
-              <polyline points={pointsProjected.join(' ')} fill="none" stroke="#D5B477" strokeWidth="2.5" />
+            {/* Golden Mountain Bezier Stroke */}
+            <path
+              d={curvePath}
+              fill="none"
+              stroke="#D5B477"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              filter="url(#goldGlow)"
+              style={{
+                strokeDasharray: isChartAnimated ? 'none' : '600',
+                strokeDashoffset: isChartAnimated ? '0' : '600',
+                transition: 'stroke-dashoffset 1s ease-out'
+              }}
+            />
 
-              {/* Final Milestone Dot */}
-              {pointsProjected.length > 0 && (
-                <circle 
-                  cx={chartWidth - paddingX} 
-                  cy={Number(pointsProjected[pointsProjected.length - 1].split(',')[1])} 
-                  r="5" 
-                  fill="#D5B477" 
-                  stroke="#090A0C" 
-                  strokeWidth="2.5" 
-                />
-              )}
-            </svg>
+            {/* Interactive Point Targets */}
+            {points.map((p, idx) => {
+              const isSelected = selectedMonthIndex === idx;
+              return (
+                <g key={`pt-${idx}`} className="cursor-pointer" onClick={() => {
+                  sound.playClick();
+                  setSelectedMonthIndex(idx);
+                }}>
+                  {/* Invisible hit area for comfortable tapping */}
+                  <circle cx={p.x} cy={p.y} r="14" fill="transparent" />
 
-            {/* X-Axis Milestone Labels */}
-            <div className="absolute bottom-0 left-0 right-0 flex justify-between px-6 text-[10px] font-mono text-[#A2A5AC]">
-              <span>Year 0 (Today)</span>
-              <span>Year 3</span>
-              <span>Year 5</span>
-              <span>Year 10</span>
-              <span className="text-[#D5B477] font-semibold">Year 15 (₹10L)</span>
+                  {/* Visual Node */}
+                  {isSelected && (
+                    <>
+                      <circle cx={p.x} cy={p.y} r="7" fill="#D5B477" opacity="0.3" className="animate-ping" />
+                      <circle cx={p.x} cy={p.y} r="4.5" fill="#D5B477" stroke="#12141A" strokeWidth="2" />
+                    </>
+                  )}
+                </g>
+              );
+            })}
+          </svg>
+
+          {/* Floating Dark Tooltip Pill at Active Point */}
+          {activePoint && (
+            <div 
+              className="absolute z-20 pointer-events-none transition-all duration-300 transform -translate-x-1/2"
+              style={{
+                left: `${(activePoint.x / chartWidth) * 100}%`,
+                top: `${(activePoint.y / chartHeight) * 100 - 32}%`
+              }}
+            >
+              <div className="px-2.5 py-1 rounded-xl bg-[#12141A]/95 border border-[#D5B477]/60 shadow-[0_4px_16px_rgba(0,0,0,0.8)] backdrop-blur-md flex items-center space-x-1 text-center">
+                <span className="font-mono text-[11px] font-bold text-[#F4F1EA]">
+                  {formatINR(activePoint.data.value)}
+                </span>
+                <span className="font-mono text-[10px] text-[#8BC6A1] font-semibold">
+                  {activePoint.data.returnPct}
+                </span>
+              </div>
             </div>
+          )}
+
+          {/* Month Labels along X-Axis */}
+          <div className="flex items-center justify-between px-2 pt-1 text-[10px] font-mono text-[#8E929C]">
+            {monthlyData.map((d, idx) => (
+              <button
+                key={d.month}
+                onClick={() => {
+                  sound.playClick();
+                  setSelectedMonthIndex(idx);
+                }}
+                className={`transition-colors cursor-pointer ${
+                  selectedMonthIndex === idx ? 'text-[#D5B477] font-bold' : 'hover:text-[#F4F1EA]'
+                }`}
+              >
+                {d.month}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* 5. NEXT RECOMMENDED ACTION: REHEARSE A BAD YEAR */}
-      <div className="p-6 sm:p-7 rounded-3xl bg-gradient-to-r from-[#20242B] via-[#1C1819] to-[#251817] border border-[#E27D78]/30 shadow-card-depth relative overflow-hidden">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 relative z-10">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#E27D78]/15 border border-[#E27D78]/30 text-[10px] font-mono text-[#E27D78]">
-              <ShieldAlert className="w-3 h-3" />
-              <span>SIGNATURE STRESS TEST</span>
-            </div>
+      {/* 5. GOAL PROGRESS SUMMARY CARD (Screen 1 Target Milestone) */}
+      <div 
+        onClick={() => {
+          sound.playClick();
+          navigateTo('budget');
+        }}
+        className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#1A1D24] to-[#12141A] border border-[#2D313B] hover:border-[#D5B477]/50 shadow-md transition-all cursor-pointer flex items-center justify-between group active:scale-[0.99]"
+      >
+        <div className="flex items-center space-x-3 truncate">
+          {/* Bullseye Icon */}
+          <div className="w-9 h-9 rounded-full bg-[#20242E] border border-[#30343B] flex items-center justify-center text-[#D5B477] shrink-0 shadow-inner">
+            <Target className="w-4 h-4 stroke-[2.2]" />
+          </div>
 
-            <h3 className="font-display text-lg sm:text-xl font-bold text-[#F4F1EA]">
-              Next Critical Step: Rehearse a Bad Year Shock
+          <div className="truncate">
+            <h3 className="font-display font-bold text-xs sm:text-sm text-[#F4F1EA] tracking-tight">
+              You're 12% closer to your goal
             </h3>
-
-            <p className="text-xs sm:text-sm text-[#A2A5AC] leading-relaxed">
-              Every long-term investor experiences market corrections. Rehearse a <span className="text-[#E27D78] font-semibold">10%, 20%, or 30% drop</span> before investing real money. See why continuing your ₹1,000 monthly SIP during downturns accelerates recovery.
+            <p className="text-[10px] sm:text-[11px] text-[#8E929C] truncate mt-0.5">
+              Keep your monthly contribution going.
             </p>
           </div>
-
-          <button
-            onClick={() => navigateTo('bad_year')}
-            className="px-5 py-3 rounded-2xl text-xs font-semibold bg-[#E27D78] hover:bg-[#E88C88] text-[#090A0C] hover:shadow-subtle-glow hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center space-x-2 shrink-0 self-stretch sm:self-auto justify-center cursor-pointer shadow-sm"
-          >
-            <span>Rehearse a Bad Year</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
         </div>
+
+        <ChevronRight className="w-4 h-4 text-[#6A707E] group-hover:text-[#D5B477] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
       </div>
 
-      {/* 6. SUPPORTING FAST JUMP TILES */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div 
-          onClick={() => navigateTo('explorer')}
-          className="p-5 rounded-2xl bg-[#101216] border border-[#30343B] hover:border-[#A9B8C8]/50 cursor-pointer transition-all group"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <Compass className="w-5 h-5 text-[#A9B8C8] group-hover:rotate-45 transition-transform" />
-            <ArrowRight className="w-3.5 h-3.5 text-[#A2A5AC] group-hover:translate-x-1 group-hover:text-[#F4F1EA] transition-all" />
-          </div>
-          <h4 className="text-xs font-bold text-[#F4F1EA]">Explore 6 Asset Classes</h4>
-          <p className="text-[11px] text-[#A2A5AC] mt-1 leading-relaxed">
-            Understand Index Funds, FDs, Gold, Bonds, Savings, and Mutual Funds in plain language.
-          </p>
-        </div>
-
-        <div 
-          onClick={() => navigateTo('simulator')}
-          className="p-5 rounded-2xl bg-[#101216] border border-[#30343B] hover:border-[#D5B477]/50 cursor-pointer transition-all group"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <TrendingUp className="w-5 h-5 text-[#D5B477] group-hover:scale-110 transition-transform" />
-            <ArrowRight className="w-3.5 h-3.5 text-[#A2A5AC] group-hover:translate-x-1 group-hover:text-[#F4F1EA] transition-all" />
-          </div>
-          <h4 className="text-xs font-bold text-[#F4F1EA]">Goal Timeline Simulator</h4>
-          <p className="text-[11px] text-[#A2A5AC] mt-1 leading-relaxed">
-            Simulate what happens if you step up to ₹1,500/month or alter your time horizon.
-          </p>
-        </div>
-
-        <div 
-          onClick={() => navigateTo('learning')}
-          className="p-5 rounded-2xl bg-[#101216] border border-[#30343B] hover:border-[#8BC6A1]/50 cursor-pointer transition-all group"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <BookOpen className="w-5 h-5 text-[#8BC6A1] group-hover:scale-110 transition-transform" />
-            <ArrowRight className="w-3.5 h-3.5 text-[#A2A5AC] group-hover:translate-x-1 group-hover:text-[#F4F1EA] transition-all" />
-          </div>
-          <h4 className="text-xs font-bold text-[#F4F1EA]">Financial Learning Hub</h4>
-          <p className="text-[11px] text-[#A2A5AC] mt-1 leading-relaxed">
-            10 interactive student guides covering rupee cost averaging, risk, and discipline.
-          </p>
-        </div>
-      </div>
     </div>
   );
 };
