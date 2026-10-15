@@ -140,34 +140,34 @@ export const AppLauncherModal: React.FC<AppLauncherModalProps> = ({ isInsideFram
         onClick={handleClose}
         className={`${
           isInsideFrame ? 'absolute inset-0' : 'fixed inset-0'
-        } bg-black/80 backdrop-blur-md transition-opacity duration-300 ${
+        } bg-black/75 backdrop-blur-[12px] transition-opacity duration-300 ${
           reducedMotion ? '' : 'animate-fadeIn'
         }`}
         aria-hidden="true"
       />
 
-      {/* Launcher Drawer / Modal Card */}
+      {/* Launcher Drawer / Modal Card with Translucent Charcoal Glass Surface */}
       <div 
         ref={drawerRef}
         className={
           isInsideFrame
-            ? `relative z-10 w-full h-[92%] bg-[#0E1015] rounded-t-[32px] border-t border-[#30343B] shadow-[0_-10px_35px_rgba(0,0,0,0.9)] flex flex-col overflow-hidden text-[#F4F1EA] ${
+            ? `relative z-10 w-full h-[92%] bg-[#0A0C10]/90 backdrop-blur-[18px] backdrop-saturate-[125%] rounded-t-[32px] border-t border-white/15 shadow-[0_-10px_35px_rgba(0,0,0,0.9)] flex flex-col overflow-hidden text-[#F4F1EA] ${
                 reducedMotion ? '' : 'animate-slideUp'
               }`
-            : `relative z-10 w-full max-w-md h-full sm:h-auto sm:max-h-[90vh] bg-[#0E1015] sm:rounded-3xl border-0 sm:border border-[#30343B] shadow-[0_20px_50px_rgba(0,0,0,0.9)] flex flex-col overflow-hidden text-[#F4F1EA] ${
+            : `relative z-10 w-full max-w-md h-full sm:h-auto sm:max-h-[90vh] bg-[#0A0C10]/92 backdrop-blur-[18px] backdrop-saturate-[125%] sm:rounded-3xl border-0 sm:border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.9)] flex flex-col overflow-hidden text-[#F4F1EA] ${
                 reducedMotion ? '' : 'animate-slideUp'
               }`
         }
       >
         {/* Subtle Ambient Specular Accent */}
-        <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-bl from-[#D5B477]/[0.04] via-transparent to-transparent pointer-events-none rounded-full" />
-        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#D5B477]/40 to-transparent" />
+        <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-bl from-[#D5B477]/[0.03] via-transparent to-transparent pointer-events-none rounded-full" />
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
 
-        {/* 1. TOP HEADER */}
-        <div className="px-5 pt-5 pb-3.5 flex items-center justify-between border-b border-[#252830] bg-[#12141A]/90 backdrop-blur-md shrink-0">
+        {/* 1. TOP HEADER GLASS */}
+        <div className="px-5 pt-5 pb-3.5 flex items-center justify-between border-b border-white/[0.08] bg-[#0E1015]/75 backdrop-blur-[16px] backdrop-saturate-[125%] shrink-0 relative z-20">
           <div className="flex items-center space-x-2.5">
             {/* 4-Square Branded Badge */}
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#20242B] to-[#14171E] border border-[#D5B477]/40 flex items-center justify-center shadow-inner">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#20242B]/90 to-[#14171E]/90 border border-[#D5B477]/40 flex items-center justify-center shadow-inner">
               <div className="grid grid-cols-2 gap-[2.5px] w-3 h-3">
                 <div className="w-1.2 h-1.2 rounded-[1.5px] bg-[#D5B477]" />
                 <div className="w-1.2 h-1.2 rounded-[1.5px] bg-[#D5B477]" />
@@ -181,7 +181,7 @@ export const AppLauncherModal: React.FC<AppLauncherModalProps> = ({ isInsideFram
                 <span className="font-display font-extrabold text-sm tracking-wider text-[#F4F1EA]">
                   FUTURA
                 </span>
-                <span className="px-1.5 py-0.2 rounded-full bg-[#1C1F26] border border-[#30343B] text-[9px] font-mono text-[#D5B477]">
+                <span className="px-1.5 py-0.2 rounded-full bg-[#1C1F26] border border-white/10 text-[9px] font-mono text-[#D5B477]">
                   LAUNCHER
                 </span>
               </div>
@@ -195,7 +195,7 @@ export const AppLauncherModal: React.FC<AppLauncherModalProps> = ({ isInsideFram
           <button
             ref={closeButtonRef}
             onClick={handleClose}
-            className="w-8 h-8 rounded-full bg-[#1C1F26] hover:bg-[#252932] border border-[#30343B] flex items-center justify-center text-[#A2A5AC] hover:text-[#F4F1EA] transition-colors cursor-pointer active:scale-95"
+            className="w-8 h-8 rounded-full bg-white/[0.05] hover:bg-white/[0.1] active:bg-white/[0.15] border border-white/10 flex items-center justify-center text-[#A2A5AC] hover:text-[#F4F1EA] transition-all cursor-pointer active:scale-95 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)]"
             aria-label="Close navigation menu"
             title="Close menu (Esc)"
           >
@@ -227,17 +227,17 @@ export const AppLauncherModal: React.FC<AppLauncherModalProps> = ({ isInsideFram
                     <button
                       key={item.id}
                       onClick={() => handleSelectDestination(item.route)}
-                      className={`w-full min-h-[46px] px-3.5 py-2.5 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer group active:scale-[0.99] ${
+                      className={`w-full min-h-[46px] px-3.5 py-2.5 rounded-xl flex items-center justify-between text-left transition-all cursor-pointer group active:scale-[0.99] backdrop-blur-[6px] ${
                         isActive
-                          ? 'bg-[#1C2028] border border-[#D5B477]/60 text-[#D5B477] shadow-[0_2px_12px_rgba(213,180,119,0.15)] font-semibold'
-                          : 'bg-[#13151B]/80 hover:bg-[#1A1D25] border border-[#232731] text-[#CAD2DC] hover:text-[#F4F1EA]'
+                          ? 'bg-[#D5B477]/[0.08] border border-[#D5B477]/40 text-[#D5B477] shadow-[inset_0_1px_0_0_rgba(213,180,119,0.25),0_2px_12px_rgba(213,180,119,0.12)] font-semibold'
+                          : 'bg-white/[0.04] hover:bg-white/[0.065] active:bg-white/[0.085] border border-white/10 hover:border-white/15 active:border-white/20 text-[#CAD2DC] hover:text-[#F4F1EA] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.07)]'
                       }`}
                     >
                       <div className="flex items-center space-x-3 truncate">
                         <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
                           isActive 
-                            ? 'bg-[#D5B477]/15 text-[#D5B477]' 
-                            : 'bg-[#1A1D24] text-[#8E929C] group-hover:text-[#F4F1EA] group-hover:bg-[#20242E]'
+                            ? 'bg-[#D5B477]/15 border border-[#D5B477]/30 text-[#D5B477] shadow-[inset_0_1px_0_0_rgba(213,180,119,0.2)]' 
+                            : 'bg-white/[0.05] border border-white/[0.08] text-[#8E929C] group-hover:text-[#F4F1EA] group-hover:bg-white/[0.08] group-hover:border-white/15 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]'
                         }`}>
                           <Icon className="w-4 h-4 stroke-[2]" />
                         </div>
@@ -257,7 +257,7 @@ export const AppLauncherModal: React.FC<AppLauncherModalProps> = ({ isInsideFram
                         {isActive ? (
                           <div className="w-1.5 h-1.5 rounded-full bg-[#D5B477] animate-pulse" />
                         ) : (
-                          <ChevronRight className="w-3.5 h-3.5 text-[#4E5360] group-hover:text-[#A2A5AC] transition-transform group-hover:translate-x-0.5" />
+                          <ChevronRight className="w-3.5 h-3.5 text-[#636875] group-hover:text-[#A2A5AC] transition-transform group-hover:translate-x-0.5" />
                         )}
                       </div>
                     </button>
@@ -268,27 +268,27 @@ export const AppLauncherModal: React.FC<AppLauncherModalProps> = ({ isInsideFram
           ))}
         </div>
 
-        {/* 3. DOCK REMINDER FOOTER */}
+        {/* 3. DOCK REMINDER FOOTER GLASS */}
         <div 
-          className="px-4 py-3 bg-[#15171C] border-t border-[#30343C] flex items-center justify-between text-[11px] text-[#A6AFBD] shrink-0"
+          className="px-4 py-3 bg-[#0A0C10]/85 backdrop-blur-[18px] backdrop-saturate-[125%] border-t border-white/[0.08] shadow-[0_-4px_16px_rgba(0,0,0,0.4)] flex items-center justify-between text-[11px] text-[#A6AFBD] shrink-0 relative z-20"
           style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))' }}
         >
           <div className="flex items-center space-x-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#E6C17D]/60" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E6C17D]/70 shadow-[0_0_6px_rgba(230,193,125,0.4)]" />
             <span>Dedicated bottom dock:</span>
           </div>
 
           <div className="flex items-center space-x-2 text-[10px] font-mono">
             <button
               onClick={() => handleSelectDestination('balance')}
-              className="flex items-center space-x-1 px-2.5 py-1 rounded-md bg-[#20232A] hover:bg-[#282C35] border border-[#30343C] text-[#E6C17D] hover:text-[#F5F3EF] transition-colors cursor-pointer"
+              className="flex items-center space-x-1 px-2.5 py-1 rounded-md bg-white/[0.05] hover:bg-white/[0.09] active:bg-white/[0.12] border border-white/10 hover:border-[#E6C17D]/40 active:border-[#E6C17D]/60 text-[#E6C17D] hover:text-[#F5F3EF] transition-all cursor-pointer shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] active:scale-95"
             >
               <Wallet className="w-3 h-3" />
               <span>Balance</span>
             </button>
             <button
               onClick={() => handleSelectDestination('budget')}
-              className="flex items-center space-x-1 px-2.5 py-1 rounded-md bg-[#20232A] hover:bg-[#282C35] border border-[#30343C] text-[#E6C17D] hover:text-[#F5F3EF] transition-colors cursor-pointer"
+              className="flex items-center space-x-1 px-2.5 py-1 rounded-md bg-white/[0.05] hover:bg-white/[0.09] active:bg-white/[0.12] border border-white/10 hover:border-[#E6C17D]/40 active:border-[#E6C17D]/60 text-[#E6C17D] hover:text-[#F5F3EF] transition-all cursor-pointer shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] active:scale-95"
             >
               <PiggyBank className="w-3 h-3" />
               <span>Budget</span>
