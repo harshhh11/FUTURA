@@ -96,6 +96,124 @@ export function generateProjectionSeries(
   return points;
 }
 
+export interface AdvancedProjectionInput {
+  initialLumpSum: number;
+  monthlyContribution: number;
+  annualRate: number; // e.g. 0.12 for 12%
+  years: number;
+  annualInflation?: number; // e.g. 0.06 for 6%
+  annualStepUpPct?: number; // e.g. 0.05 for 5% step-up per year
+  annualFeePct?: number; // e.g. 0.002 for 0.2% expense ratio drag
+}
+
+export interface YearlyBreakdownPoint {
+  year: number;
+  totalContributed: number;
+  nominalValue: number;
+  realPurchasingPower: number;
+  gain: number;
+  compoundingMultiple: number;
+}
+
+export interface AdvancedProjectionResult {
+  totalContributed: number;
+  nominalValue: number;
+  realPurchasingPower: number;
+  wealthGain: number;
+  compoundingMultiple: number;
+  effectiveAnnualRate: number;
+  breakdown: YearlyBreakdownPoint[];
+}
+
+/**
+ * Calculates advanced return projections with compounding, optional step-up,
+ * inflation adjustment, and fee drag.
+ * 
+ * Formula:
+ * FV = P * ((1 + r)^n - 1) / r + Principal * (1 + r)^n
+ */
+export function calculateAdvancedProjection(
+  input: AdvancedProjectionInput
+): AdvancedProjectionResult {
+  const {
+    initialLumpSum = 0,
+    monthlyContribution = 0,
+    annualRate = 0.08,
+    years = 5,
+    annualInflation = 0.06,
+    annualStepUpPct = 0,
+    annualFeePct = 0,
+  } = input;
+
+  const effectiveRate = Math.max(0, annualRate - annualFeePct);
+  const totalYears = Math.max(1, Math.min(years, 40));
+  const breakdown: YearlyBreakdownPoint[] = [];
+
+  let currentPrincipal = initialLumpSum;
+  let totalContributed = initialLumpSum;
+  let currentMonthlyDeposit = monthlyContribution;
+
+  // Year 0 baseline
+  breakdown.push({
+    year: 0,
+    totalContributed: Math.round(initialLumpSum),
+    nominalValue: Math.round(initialLumpSum),
+    realPurchasingPower: Math.round(initialLumpSum),
+    gain: 0,
+    compoundingMultiple: 1.0,
+  });
+
+  for (let y = 1; y <= totalYears; y++) {
+    const monthlyRate = effectiveRate / 12;
+
+    if (monthlyRate <= 0.00001) {
+      // Zero return edge case
+      currentPrincipal += currentMonthlyDeposit * 12;
+      totalContributed += currentMonthlyDeposit * 12;
+    } else {
+      // 12 months compounding for current year
+      for (let m = 1; m <= 12; m++) {
+        currentPrincipal = (currentPrincipal + currentMonthlyDeposit) * (1 + monthlyRate);
+        totalContributed += currentMonthlyDeposit;
+      }
+    }
+
+    // Inflation adjustment: Real Value = FV / (1 + i)^y
+    const inflationFactor = Math.pow(1 + annualInflation, y);
+    const realPurchasingPower = Math.round(currentPrincipal / inflationFactor);
+    const roundedContributed = Math.round(totalContributed);
+    const roundedNominal = Math.round(currentPrincipal);
+    const gain = Math.max(0, roundedNominal - roundedContributed);
+    const multiple = roundedContributed > 0 ? Number((roundedNominal / roundedContributed).toFixed(2)) : 1.0;
+
+    breakdown.push({
+      year: y,
+      totalContributed: roundedContributed,
+      nominalValue: roundedNominal,
+      realPurchasingPower,
+      gain,
+      compoundingMultiple: multiple,
+    });
+
+    // Apply annual step-up to monthly contribution for subsequent year if configured
+    if (annualStepUpPct > 0) {
+      currentMonthlyDeposit = Math.round(currentMonthlyDeposit * (1 + annualStepUpPct));
+    }
+  }
+
+  const finalPoint = breakdown[breakdown.length - 1];
+
+  return {
+    totalContributed: finalPoint.totalContributed,
+    nominalValue: finalPoint.nominalValue,
+    realPurchasingPower: finalPoint.realPurchasingPower,
+    wealthGain: finalPoint.gain,
+    compoundingMultiple: finalPoint.compoundingMultiple,
+    effectiveAnnualRate: effectiveRate,
+    breakdown,
+  };
+}
+
 /**
  * Calculates estimated months required to reach a target amount.
  */
