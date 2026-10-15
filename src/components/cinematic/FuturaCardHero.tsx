@@ -142,8 +142,8 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
       <div className="absolute top-0 right-1/4 w-[600px] h-[520px] bg-gradient-to-b from-white/[0.05] via-white/[0.015] to-transparent blur-3xl pointer-events-none rounded-full" />
       <div className="absolute top-1/3 left-1/3 w-[450px] h-[450px] bg-white/[0.02] blur-3xl pointer-events-none rounded-full" />
 
-      {/* SMARTPHONE-PROPORTIONED CANVAS (True Edge-to-Edge Full Viewport on mobile, generous container on desktop) */}
-      <div className="w-full max-w-full lg:max-w-[480px] xl:max-w-[500px] flex flex-col justify-between px-3.5 sm:px-6 lg:px-2 pt-1 pb-2 relative z-10">
+      {/* SMARTPHONE-PROPORTIONED CANVAS (True Edge-to-Edge Full Viewport on mobile, proportional container on desktop) */}
+      <div className="w-full max-w-full lg:max-w-[410px] xl:max-w-[430px] flex flex-col justify-between px-3.5 sm:px-6 lg:px-1 pt-1 pb-2 relative z-10">
 
         {/* 1. TOP HEADER BAR (Mobile Only) */}
         <header 

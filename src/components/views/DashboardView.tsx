@@ -109,16 +109,16 @@ export const DashboardView: React.FC = () => {
   return (
     <div className="w-full space-y-6 animate-fadeIn pb-28 md:pb-12 text-[#F4F1EA] select-none">
       
-      {/* RESPONSIVE LAYOUT: 1-Column on Mobile, 2-Column on Desktop */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 xl:gap-10 items-start">
+      {/* RESPONSIVE LAYOUT: 1-Column on Mobile, Proportional 2-Pane on Desktop (Center Hero + Flexible Analytics) */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(350px,410px)_minmax(0,1fr)] xl:grid-cols-[minmax(380px,430px)_minmax(0,1fr)] gap-5 lg:gap-6 xl:gap-7 items-start w-full">
         
-        {/* LEFT COLUMN: THE ICONIC 3D METALLIC CARD HERO + CAROUSEL + SMART ALLOCATIONS */}
-        <div className="lg:col-span-5 w-full flex justify-center">
+        {/* CENTER COLUMN: THE ICONIC 3D METALLIC CARD HERO + CAROUSEL + SMART ALLOCATIONS */}
+        <div className="w-full flex justify-center">
           <FuturaCardHero />
         </div>
 
-        {/* RIGHT COLUMN: ANALYTICS, CATEGORY CARDS & GROWTH TRAJECTORY */}
-        <div className="lg:col-span-7 w-full space-y-4 sm:space-y-5 lg:space-y-6 px-3.5 sm:px-6 lg:px-0">
+        {/* RIGHT COLUMN: FINANCIAL ANALYTICS, CATEGORY CARDS & GROWTH TRAJECTORY */}
+        <div className="w-full min-w-0 space-y-4 sm:space-y-5 lg:space-y-6 px-3.5 sm:px-6 lg:px-0">
           
           {/* Total Wealth Header */}
           <div className="p-4 sm:p-5 lg:p-6 rounded-2xl bg-[#15171C]/90 border border-[#30343C]/80 shadow-card-depth flex items-center justify-between">
