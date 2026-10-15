@@ -69,16 +69,16 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-64 bg-[#15171C] border-r border-[#30343C]/60 flex flex-col flex-shrink-0 min-h-[calc(100vh-4rem)] p-4 select-none">
+    <aside className="w-72 bg-[#15171C] border-r border-[#30343C]/60 flex flex-col flex-shrink-0 sticky top-16 h-[calc(100dvh-4rem)] p-4.5 select-none">
       {/* Student Profile Snapshot Card */}
-      <div className="p-3.5 mb-5 rounded-2xl bg-gradient-to-b from-[#20232A]/90 to-[#191C22] border border-[#30343C] shadow-card-depth">
-        <div className="flex items-center justify-between mb-2">
+      <div className="p-4 mb-5 rounded-2xl bg-gradient-to-b from-[#20232A]/90 to-[#191C22] border border-[#30343C] shadow-card-depth">
+        <div className="flex items-center justify-between mb-2.5">
           <div className="flex items-center space-x-2.5">
             <div className="w-8 h-8 rounded-full bg-[#E6C17D]/15 border border-[#E6C17D]/40 flex items-center justify-center text-xs font-bold text-[#E6C17D]">
               {userProfile.name.split(' ').map(n => n[0]).join('')}
             </div>
             <div>
-              <p className="text-xs font-semibold text-[#F5F3EF] truncate max-w-[110px]">
+              <p className="text-xs font-semibold text-[#F5F3EF] truncate max-w-[130px]">
                 {userProfile.name}
               </p>
               <p className="text-[10px] text-[#A6AFBD] font-mono">
@@ -95,7 +95,7 @@ export const Sidebar: React.FC = () => {
           </button>
         </div>
 
-        <div className="pt-2 border-t border-[#30343C]/60 grid grid-cols-2 gap-2 text-[10px]">
+        <div className="pt-2.5 border-t border-[#30343C]/60 grid grid-cols-2 gap-2 text-[10px]">
           <div>
             <span className="text-[#A6AFBD]">Monthly Income</span>
             <p className="font-mono font-medium text-[#F5F3EF]">{formatINR(userProfile.monthlyIncome)}</p>
@@ -108,13 +108,13 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* Nav Menu Groups */}
-      <div className="flex-1 space-y-5 overflow-y-auto pr-1">
+      <div className="flex-1 space-y-6 overflow-y-auto pr-1">
         {navGroups.map((group) => (
           <div key={group.group}>
-            <p className="px-3 text-[10px] uppercase font-mono tracking-wider text-[#A6AFBD]/70 mb-1.5">
+            <p className="px-3 text-[10px] uppercase font-mono tracking-wider text-[#A6AFBD]/60 font-semibold mb-2">
               {group.group}
             </p>
-            <div className="space-y-0.5">
+            <div className="space-y-1">
               {group.items.map((item) => {
                 const Icon = item.icon;
                 const isActive = currentRoute === item.route;
@@ -122,21 +122,21 @@ export const Sidebar: React.FC = () => {
                   <button
                     key={item.route}
                     onClick={() => navigateTo(item.route)}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all group cursor-pointer ${
+                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all group cursor-pointer ${
                       isActive
-                        ? 'bg-[#20232A] text-[#F5F3EF] shadow-sm border border-[#A9B8C8]/20'
-                        : 'text-[#A6AFBD] hover:text-[#F5F3EF] hover:bg-[#191C22]/80'
+                        ? 'bg-[#20232A] text-[#F5F3EF] shadow-sm border border-[#E6C17D]/35 font-semibold'
+                        : 'text-[#A6AFBD] hover:text-[#F5F3EF] hover:bg-[#191C22]/80 border border-transparent'
                     }`}
                   >
-                    <div className="flex items-center space-x-2.5">
-                      <Icon className={`w-4 h-4 transition-colors ${
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <Icon className={`w-4 h-4 flex-shrink-0 transition-colors ${
                         item.color || (isActive ? 'text-[#E6C17D]' : 'text-[#A6AFBD] group-hover:text-[#F5F3EF]')
                       }`} />
-                      <span>{item.label}</span>
+                      <span className="truncate whitespace-nowrap">{item.label}</span>
                     </div>
 
                     {item.badge && (
-                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#E27D78]/15 text-[#E27D78] border border-[#E27D78]/30">
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#E27D78]/15 text-[#E27D78] border border-[#E27D78]/30 flex-shrink-0 ml-2 whitespace-nowrap">
                         {item.badge}
                       </span>
                     )}

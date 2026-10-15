@@ -269,23 +269,26 @@ export const AppLauncherModal: React.FC<AppLauncherModalProps> = ({ isInsideFram
         </div>
 
         {/* 3. DOCK REMINDER FOOTER */}
-        <div className="px-4 py-3 bg-[#111318] border-t border-[#232731] flex items-center justify-between text-[11px] text-[#8E929C] shrink-0">
+        <div 
+          className="px-4 py-3 bg-[#15171C] border-t border-[#30343C] flex items-center justify-between text-[11px] text-[#A6AFBD] shrink-0"
+          style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))' }}
+        >
           <div className="flex items-center space-x-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#D5B477]/60" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E6C17D]/60" />
             <span>Dedicated bottom dock:</span>
           </div>
 
           <div className="flex items-center space-x-2 text-[10px] font-mono">
             <button
               onClick={() => handleSelectDestination('balance')}
-              className="flex items-center space-x-1 px-2 py-0.5 rounded-md bg-[#171A21] hover:bg-[#20242B] border border-[#30343B] text-[#D5B477] hover:text-[#F4F1EA] transition-colors cursor-pointer"
+              className="flex items-center space-x-1 px-2.5 py-1 rounded-md bg-[#20232A] hover:bg-[#282C35] border border-[#30343C] text-[#E6C17D] hover:text-[#F5F3EF] transition-colors cursor-pointer"
             >
               <Wallet className="w-3 h-3" />
               <span>Balance</span>
             </button>
             <button
               onClick={() => handleSelectDestination('budget')}
-              className="flex items-center space-x-1 px-2 py-0.5 rounded-md bg-[#171A21] hover:bg-[#20242B] border border-[#30343B] text-[#D5B477] hover:text-[#F4F1EA] transition-colors cursor-pointer"
+              className="flex items-center space-x-1 px-2.5 py-1 rounded-md bg-[#20232A] hover:bg-[#282C35] border border-[#30343C] text-[#E6C17D] hover:text-[#F5F3EF] transition-colors cursor-pointer"
             >
               <PiggyBank className="w-3 h-3" />
               <span>Budget</span>
