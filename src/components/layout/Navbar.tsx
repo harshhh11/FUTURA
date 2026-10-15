@@ -15,10 +15,10 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#08090B]/90 backdrop-blur-md border-b border-[#30343C]/60 transition-all duration-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Wordmark & Emblem: Click to return to landing page */}
         <div 
-          className="flex items-center space-x-3 cursor-pointer group" 
+          className="flex items-center space-x-3 cursor-pointer group shrink-0" 
           onClick={() => {
             sound.playClick();
             navigateTo('landing');
@@ -36,83 +36,83 @@ export const Navbar: React.FC = () => {
         </div>
 
         {/* Center Application Nav Links */}
-        <nav className="hidden md:flex items-center space-x-1 lg:space-x-1.5">
+        <nav className="hidden md:flex items-center gap-1 lg:gap-1.5 xl:gap-2">
           <button
             onClick={() => navigateTo('dashboard')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
               currentRoute === 'dashboard'
-                ? 'text-[#F5F3EF] bg-[#20232A] shadow-sm font-semibold'
-                : 'text-[#A6AFBD] hover:text-[#F5F3EF] hover:bg-[#15171C]'
+                ? 'text-[#F5F3EF] bg-[#20232A] shadow-sm font-semibold border border-[#E6C17D]/35'
+                : 'text-[#A6AFBD] hover:text-[#F5F3EF] hover:bg-[#15171C] border border-transparent'
             }`}
           >
             Dashboard
           </button>
           <button
             onClick={() => navigateTo('balance')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
               currentRoute === 'balance'
-                ? 'text-[#F5F3EF] bg-[#20232A] shadow-sm font-semibold'
-                : 'text-[#A6AFBD] hover:text-[#F5F3EF] hover:bg-[#15171C]'
+                ? 'text-[#F5F3EF] bg-[#20232A] shadow-sm font-semibold border border-[#E6C17D]/35'
+                : 'text-[#A6AFBD] hover:text-[#F5F3EF] hover:bg-[#15171C] border border-transparent'
             }`}
           >
             Balance
           </button>
           <button
             onClick={() => navigateTo('moneyflow')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
               currentRoute === 'moneyflow'
-                ? 'text-[#F5F3EF] bg-[#20232A] shadow-sm font-semibold'
-                : 'text-[#A6AFBD] hover:text-[#F5F3EF] hover:bg-[#15171C]'
+                ? 'text-[#F5F3EF] bg-[#20232A] shadow-sm font-semibold border border-[#E6C17D]/35'
+                : 'text-[#A6AFBD] hover:text-[#F5F3EF] hover:bg-[#15171C] border border-transparent'
             }`}
           >
             MoneyFlow
           </button>
           <button
             onClick={() => navigateTo('simulator')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
               currentRoute === 'simulator'
-                ? 'text-[#F5F3EF] bg-[#20232A] shadow-sm font-semibold'
-                : 'text-[#A6AFBD] hover:text-[#F5F3EF] hover:bg-[#15171C]'
+                ? 'text-[#F5F3EF] bg-[#20232A] shadow-sm font-semibold border border-[#E6C17D]/35'
+                : 'text-[#A6AFBD] hover:text-[#F5F3EF] hover:bg-[#15171C] border border-transparent'
             }`}
           >
             Simulator
           </button>
           <button
             onClick={() => navigateTo('explorer')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
               currentRoute === 'explorer' || currentRoute === 'comparison'
-                ? 'text-[#F5F3EF] bg-[#20232A] shadow-sm font-semibold'
-                : 'text-[#A6AFBD] hover:text-[#F5F3EF] hover:bg-[#15171C]'
+                ? 'text-[#F5F3EF] bg-[#20232A] shadow-sm font-semibold border border-[#E6C17D]/35'
+                : 'text-[#A6AFBD] hover:text-[#F5F3EF] hover:bg-[#15171C] border border-transparent'
             }`}
           >
             Investments
           </button>
           <button
             onClick={() => navigateTo('portfolio')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
               currentRoute === 'portfolio'
-                ? 'text-[#F5F3EF] bg-[#20232A] shadow-sm font-semibold'
-                : 'text-[#A6AFBD] hover:text-[#F5F3EF] hover:bg-[#15171C]'
+                ? 'text-[#F5F3EF] bg-[#20232A] shadow-sm font-semibold border border-[#E6C17D]/35'
+                : 'text-[#A6AFBD] hover:text-[#F5F3EF] hover:bg-[#15171C] border border-transparent'
             }`}
           >
             Portfolio
           </button>
           <button
             onClick={() => navigateTo('bad_year')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
               currentRoute === 'bad_year' || currentRoute === 'recovery'
-                ? 'text-[#E27D78] bg-[#E27D78]/10 border border-[#E27D78]/25 font-semibold'
-                : 'text-[#A6AFBD] hover:text-[#E27D78] hover:bg-[#15171C]'
+                ? 'text-[#F5F3EF] bg-[#20232A] shadow-sm font-semibold border border-[#E27D78]/50'
+                : 'text-[#A6AFBD] hover:text-[#F5F3EF] hover:bg-[#15171C] border border-transparent'
             }`}
           >
             Rehearse
           </button>
           <button
             onClick={() => navigateTo('learning')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
               currentRoute === 'learning'
-                ? 'text-[#80C9A0] bg-[#80C9A0]/10 border border-[#80C9A0]/25 font-semibold'
-                : 'text-[#A6AFBD] hover:text-[#80C9A0] hover:bg-[#15171C]'
+                ? 'text-[#F5F3EF] bg-[#20232A] shadow-sm font-semibold border border-[#80C9A0]/50'
+                : 'text-[#A6AFBD] hover:text-[#F5F3EF] hover:bg-[#15171C] border border-transparent'
             }`}
           >
             Learn
@@ -120,7 +120,7 @@ export const Navbar: React.FC = () => {
         </nav>
 
         {/* Right Action buttons */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2.5 shrink-0">
           {/* Subtle Tactile Sound Toggle */}
           <button
             onClick={() => setSoundEnabled(!soundEnabled)}
@@ -151,9 +151,9 @@ export const Navbar: React.FC = () => {
           {/* Adjust Plan Baseline Modal Button */}
           <button
             onClick={() => setIsOnboardingOpen(true)}
-            className="px-3.5 py-2 min-h-[40px] rounded-xl text-xs font-semibold bg-gradient-to-r from-[#E6C17D] to-[#F0D399] text-[#08090B] hover:shadow-subtle-glow hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center space-x-1.5 cursor-pointer shadow-sm"
+            className="h-10 px-3.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-[#E6C17D] to-[#F0D399] text-[#08090B] hover:shadow-subtle-glow hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center space-x-1.5 cursor-pointer shadow-sm whitespace-nowrap"
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <Sparkles className="w-3.5 h-3.5 shrink-0" />
             <span className="hidden sm:inline">Adjust Plan</span>
           </button>
         </div>

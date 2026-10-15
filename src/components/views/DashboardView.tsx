@@ -110,7 +110,7 @@ export const DashboardView: React.FC = () => {
     <div className="w-full space-y-6 animate-fadeIn pb-28 md:pb-12 text-[#F4F1EA] select-none">
       
       {/* RESPONSIVE LAYOUT: 1-Column on Mobile, 2-Column on Desktop */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 xl:gap-10 items-start">
         
         {/* LEFT COLUMN: THE ICONIC 3D METALLIC CARD HERO + CAROUSEL + SMART ALLOCATIONS */}
         <div className="lg:col-span-5 w-full flex justify-center">
@@ -118,10 +118,10 @@ export const DashboardView: React.FC = () => {
         </div>
 
         {/* RIGHT COLUMN: ANALYTICS, CATEGORY CARDS & GROWTH TRAJECTORY */}
-        <div className="lg:col-span-7 w-full space-y-4 sm:space-y-5">
+        <div className="lg:col-span-7 w-full space-y-4 sm:space-y-5 lg:space-y-6">
           
           {/* Total Wealth Header */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-[#15171C]/90 border border-[#30343C]/80 shadow-card-depth flex items-center justify-between">
+          <div className="p-4 sm:p-5 lg:p-6 rounded-2xl bg-[#15171C]/90 border border-[#30343C]/80 shadow-card-depth flex items-center justify-between">
             <div className="space-y-1">
               <div className="flex items-center space-x-1.5 text-xs text-[#A6AFBD]">
                 <span className="tracking-tight">Total Portfolio Wealth</span>
@@ -137,15 +137,16 @@ export const DashboardView: React.FC = () => {
                 </button>
               </div>
 
-              <div className="font-display font-extrabold text-2xl sm:text-3xl tracking-tight text-[#F5F3EF] leading-tight">
+              <div className="font-display font-extrabold text-2xl sm:text-3xl lg:text-[34px] tracking-tight text-[#F5F3EF] leading-tight">
                 {showWealth ? formatINR(totalWealth) : '••••••••'}
               </div>
 
-              <div className="flex items-center space-x-1.5 text-xs font-mono font-medium pt-0.5">
+              <div className="flex items-center space-x-2 text-xs font-mono font-medium pt-0.5">
                 <span className="text-[#80C9A0] flex items-center">
                   <span>↑</span>
                   <span className="ml-0.5">+12.4%</span>
                 </span>
+                <span className="text-[#A6AFBD] font-normal">·</span>
                 <span className="text-[#E6C17D]">+₹39,450 this year</span>
               </div>
             </div>
@@ -155,7 +156,7 @@ export const DashboardView: React.FC = () => {
                 sound.playClick();
                 navigateTo('balance');
               }}
-              className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#20232A] hover:bg-[#282C35] border border-[#30343C] hover:border-[#E6C17D]/50 text-[#F5F3EF] flex items-center space-x-1.5 transition-all cursor-pointer min-h-[44px]"
+              className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-semibold bg-[#20232A] hover:bg-[#282C35] border border-[#30343C] hover:border-[#E6C17D]/50 text-[#F5F3EF] flex items-center space-x-1.5 transition-all cursor-pointer min-h-[44px] shrink-0 shadow-sm"
             >
               <span>Balance Details</span>
               <ArrowUpRight className="w-3.5 h-3.5 text-[#E6C17D]" />
@@ -163,24 +164,24 @@ export const DashboardView: React.FC = () => {
           </div>
 
           {/* 3 Financial Category Cards (Cash & Savings, Investments, Emergency Buffer) */}
-          <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
+          <div className="grid grid-cols-3 gap-2.5 sm:gap-3.5 lg:gap-4">
             {/* 1. Cash & Savings */}
             <div 
               onClick={() => {
                 sound.playClick();
                 navigateTo('budget');
               }}
-              className="p-3 sm:p-3.5 rounded-2xl bg-[#15171C]/90 border border-[#30343C]/80 hover:border-[#E6C17D]/40 transition-all cursor-pointer group flex flex-col justify-between"
+              className="p-3 sm:p-4 rounded-2xl bg-[#15171C]/90 border border-[#30343C]/80 hover:border-[#E6C17D]/50 transition-all cursor-pointer group flex flex-col justify-between shadow-xs"
             >
-              <div className="flex items-center justify-between text-[#A6AFBD] mb-1.5">
-                <span className="text-[10px] sm:text-[11px] font-medium leading-tight truncate">Cash & Savings</span>
-                <Wallet className="w-3.5 h-3.5 text-[#E6C17D] shrink-0" />
+              <div className="flex items-center justify-between text-[#A6AFBD] mb-2">
+                <span className="text-[10px] sm:text-xs font-medium leading-tight truncate">Cash & Savings</span>
+                <Wallet className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-[#E6C17D] shrink-0" />
               </div>
               <div>
-                <div className="font-display font-bold text-xs sm:text-sm text-[#F5F3EF] tracking-tight truncate">
+                <div className="font-display font-bold text-xs sm:text-sm lg:text-base text-[#F5F3EF] tracking-tight truncate">
                   {formatINR(accountAllocations.cash)}
                 </div>
-                <div className="text-[10px] font-mono text-[#E6C17D] mt-0.5">
+                <div className="text-[10px] sm:text-xs font-mono text-[#E6C17D] mt-0.5 font-medium">
                   {cashPct}%
                 </div>
               </div>
@@ -192,17 +193,17 @@ export const DashboardView: React.FC = () => {
                 sound.playClick();
                 navigateTo('portfolio');
               }}
-              className="p-3 sm:p-3.5 rounded-2xl bg-[#15171C]/90 border border-[#30343C]/80 hover:border-[#80C9A0]/40 transition-all cursor-pointer group flex flex-col justify-between"
+              className="p-3 sm:p-4 rounded-2xl bg-[#15171C]/90 border border-[#30343C]/80 hover:border-[#80C9A0]/50 transition-all cursor-pointer group flex flex-col justify-between shadow-xs"
             >
-              <div className="flex items-center justify-between text-[#A6AFBD] mb-1.5">
-                <span className="text-[10px] sm:text-[11px] font-medium leading-tight truncate">Investments</span>
-                <TrendingUp className="w-3.5 h-3.5 text-[#80C9A0] shrink-0" />
+              <div className="flex items-center justify-between text-[#A6AFBD] mb-2">
+                <span className="text-[10px] sm:text-xs font-medium leading-tight truncate">Investments</span>
+                <TrendingUp className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-[#80C9A0] shrink-0" />
               </div>
               <div>
-                <div className="font-display font-bold text-xs sm:text-sm text-[#F5F3EF] tracking-tight truncate">
+                <div className="font-display font-bold text-xs sm:text-sm lg:text-base text-[#F5F3EF] tracking-tight truncate">
                   {formatINR(accountAllocations.investments)}
                 </div>
-                <div className="text-[10px] font-mono text-[#80C9A0] mt-0.5">
+                <div className="text-[10px] sm:text-xs font-mono text-[#80C9A0] mt-0.5 font-medium">
                   {invPct}%
                 </div>
               </div>
@@ -214,17 +215,17 @@ export const DashboardView: React.FC = () => {
                 sound.playClick();
                 navigateTo('moneyflow');
               }}
-              className="p-3 sm:p-3.5 rounded-2xl bg-[#15171C]/90 border border-[#30343C]/80 hover:border-[#A6AFBD]/40 transition-all cursor-pointer group flex flex-col justify-between"
+              className="p-3 sm:p-4 rounded-2xl bg-[#15171C]/90 border border-[#30343C]/80 hover:border-[#A6AFBD]/50 transition-all cursor-pointer group flex flex-col justify-between shadow-xs"
             >
-              <div className="flex items-center justify-between text-[#A6AFBD] mb-1.5">
-                <span className="text-[10px] sm:text-[11px] font-medium leading-tight truncate">Emergency Buffer</span>
-                <Shield className="w-3.5 h-3.5 text-[#A6AFBD] shrink-0" />
+              <div className="flex items-center justify-between text-[#A6AFBD] mb-2">
+                <span className="text-[10px] sm:text-xs font-medium leading-tight truncate">Emergency Buffer</span>
+                <Shield className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-[#A6AFBD] shrink-0" />
               </div>
               <div>
-                <div className="font-display font-bold text-xs sm:text-sm text-[#F5F3EF] tracking-tight truncate">
+                <div className="font-display font-bold text-xs sm:text-sm lg:text-base text-[#F5F3EF] tracking-tight truncate">
                   {formatINR(accountAllocations.reserve)}
                 </div>
-                <div className="text-[10px] font-mono text-[#A6AFBD] mt-0.5">
+                <div className="text-[10px] sm:text-xs font-mono text-[#A6AFBD] mt-0.5 font-medium">
                   {reservePct}%
                 </div>
               </div>
@@ -233,7 +234,7 @@ export const DashboardView: React.FC = () => {
 
 
       {/* 4. PORTFOLIO GROWTH SECTION (Golden Mountain Curve with Live Tooltip) */}
-      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-b from-[#171A21] to-[#0E1015] border border-[#2D313B] shadow-card-depth space-y-3">
+      <div className="p-4 sm:p-5 lg:p-6 rounded-2xl bg-gradient-to-b from-[#171A21] to-[#0E1015] border border-[#2D313B] shadow-card-depth space-y-3.5 lg:space-y-4">
         {/* Section Header */}
         <div className="flex items-center justify-between">
           <button
@@ -415,7 +416,7 @@ export const DashboardView: React.FC = () => {
       </div>
 
       {/* 6. SIGNATURE STRESS TEST: REHEARSE A BAD YEAR */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#20232A] via-[#1C1819] to-[#251817] border border-[#E27D78]/30 shadow-card-depth flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="p-4 sm:p-5 lg:p-6 rounded-2xl bg-gradient-to-r from-[#20232A] via-[#1C1819] to-[#251817] border border-[#E27D78]/30 shadow-card-depth flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-full bg-[#E27D78]/15 border border-[#E27D78]/30 text-[9px] font-mono text-[#E27D78]">
             <ShieldAlert className="w-3 h-3" />
@@ -441,7 +442,7 @@ export const DashboardView: React.FC = () => {
       </div>
 
       {/* 7. QUICK ACCESS TILES */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-4">
         <div 
           onClick={() => {
             sound.playClick();

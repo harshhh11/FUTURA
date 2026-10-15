@@ -116,8 +116,8 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
       <div className="absolute top-0 right-1/4 w-[600px] h-[520px] bg-gradient-to-b from-white/[0.05] via-white/[0.015] to-transparent blur-3xl pointer-events-none rounded-full" />
       <div className="absolute top-1/3 left-1/3 w-[450px] h-[450px] bg-white/[0.02] blur-3xl pointer-events-none rounded-full" />
 
-      {/* SMARTPHONE-PROPORTIONED CANVAS (Centered on Pure Black Full Viewport) */}
-      <div className="w-full max-w-[420px] sm:max-w-[440px] flex flex-col justify-between px-3 sm:px-4 pt-1 pb-4 relative z-10">
+      {/* SMARTPHONE-PROPORTIONED CANVAS (Centered on Pure Black Full Viewport on mobile, generous container on desktop) */}
+      <div className="w-full max-w-[420px] sm:max-w-[440px] lg:max-w-[480px] xl:max-w-[500px] flex flex-col justify-between px-3 sm:px-4 lg:px-2 pt-1 pb-4 relative z-10">
 
         {/* 1. TOP HEADER BAR (Mobile Only) */}
         <header 
@@ -221,11 +221,11 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
         </div>
 
         {/* 3. CENTER STAGE: DRAMATIC ASYMMETRIC 3D METALLIC CARD SUSPENDED OVER PEDESTAL */}
-        <div className="relative w-full my-auto py-2 flex flex-col items-center justify-center min-h-[380px] sm:min-h-[410px]">
+        <div className="relative w-full my-auto py-2 lg:py-4 flex flex-col items-center justify-center min-h-[380px] sm:min-h-[410px] lg:min-h-[440px] xl:min-h-[460px]">
           
           {/* FLOATING SUPPORTING FINANCIAL DETAILS (FUTURA Instruments, positioned in negative space) */}
           {/* Upper Right Metric: [+12.4%] [Nifty 50 SIP from user profile] */}
-          <div className="absolute right-0 top-3 z-30 flex items-center space-x-1.5 pointer-events-none">
+          <div className="absolute right-0 lg:right-2 top-3 lg:top-1 z-30 flex items-center space-x-1.5 pointer-events-none">
             <span className="px-2 py-0.5 rounded-full bg-[#181B22] border border-[#8BC6A1]/30 text-[#8BC6A1] text-[10px] font-mono font-medium shadow-sm">
               +12.4%
             </span>
@@ -236,7 +236,7 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
           </div>
 
           {/* Lower Left Metric: [Gold ETF] [+8.2%] */}
-          <div className="absolute left-0 bottom-16 z-30 flex items-center space-x-1.5 pointer-events-none">
+          <div className="absolute left-0 lg:left-2 bottom-16 lg:bottom-20 z-30 flex items-center space-x-1.5 pointer-events-none">
             <div className="text-left leading-none">
               <span className="block text-[10px] text-[#8E929C] -mb-0.5">Gold ETF</span>
               <span className="text-xs sm:text-sm font-semibold text-white font-mono tracking-tight">{formatINR(Math.round(monthlySip * 0.2))}</span>
@@ -415,7 +415,7 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
           className={`w-full transition-all duration-500 ease-out z-50 ${
             isDrawerOpen 
               ? 'fixed inset-x-0 bottom-0 max-w-[440px] mx-auto h-[70%] rounded-t-[36px] bg-[#0E1015]/98 border-t border-white/20 backdrop-blur-2xl shadow-2xl flex flex-col justify-between p-5'
-              : 'rounded-2xl bg-[#0E1015]/90 border border-white/10 pt-3 pb-3 px-4 shadow-xl backdrop-blur-md cursor-pointer'
+              : 'mt-2.5 lg:mt-5 rounded-2xl bg-[#0E1015]/90 lg:bg-[#15171C]/90 border border-white/10 lg:border-[#30343C]/80 pt-3 pb-3 px-4 lg:p-4 shadow-xl lg:shadow-card-depth backdrop-blur-md cursor-pointer'
           }`}
           style={isDrawerOpen ? { paddingBottom: 'max(2.5rem, env(safe-area-inset-bottom, 0px))' } : undefined}
           onClick={() => {

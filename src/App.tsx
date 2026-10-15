@@ -89,7 +89,7 @@ const MainRouter: React.FC = () => {
       </div>
 
       {/* Real App Shell: Desktop Left Sidebar + Main Content Workspace */}
-      <div className="flex-1 flex w-full max-w-7xl mx-auto">
+      <div className="flex-1 flex w-full max-w-[1600px] mx-auto">
         {/* Desktop Left Sidebar */}
         <div className="hidden md:block">
           <Sidebar />
