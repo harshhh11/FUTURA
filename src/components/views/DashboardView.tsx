@@ -121,32 +121,32 @@ export const DashboardView: React.FC = () => {
         <div className="lg:col-span-7 w-full space-y-4 sm:space-y-5">
           
           {/* Total Wealth Header */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-[#101216]/90 border border-[#2D313B]/80 shadow-card-depth flex items-center justify-between">
+          <div className="p-4 sm:p-5 rounded-2xl bg-[#15171C]/90 border border-[#30343C]/80 shadow-card-depth flex items-center justify-between">
             <div className="space-y-1">
-              <div className="flex items-center space-x-1.5 text-xs text-[#8E929C]">
+              <div className="flex items-center space-x-1.5 text-xs text-[#A6AFBD]">
                 <span className="tracking-tight">Total Portfolio Wealth</span>
                 <button
                   onClick={() => {
                     sound.playClick();
                     setShowWealth(!showWealth);
                   }}
-                  className="text-[#8E929C] hover:text-[#D5B477] transition-colors cursor-pointer"
+                  className="text-[#A6AFBD] hover:text-[#E6C17D] transition-colors cursor-pointer"
                   title={showWealth ? 'Hide balance' : 'Show balance'}
                 >
-                  {showWealth ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 text-[#D5B477]" />}
+                  {showWealth ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 text-[#E6C17D]" />}
                 </button>
               </div>
 
-              <div className="font-display font-extrabold text-2xl sm:text-3xl tracking-tight text-[#F4F1EA] leading-tight">
+              <div className="font-display font-extrabold text-2xl sm:text-3xl tracking-tight text-[#F5F3EF] leading-tight">
                 {showWealth ? formatINR(totalWealth) : '••••••••'}
               </div>
 
               <div className="flex items-center space-x-1.5 text-xs font-mono font-medium pt-0.5">
-                <span className="text-[#8BC6A1] flex items-center">
+                <span className="text-[#80C9A0] flex items-center">
                   <span>↑</span>
                   <span className="ml-0.5">+12.4%</span>
                 </span>
-                <span className="text-[#D5B477]">+₹39,450 this year</span>
+                <span className="text-[#E6C17D]">+₹39,450 this year</span>
               </div>
             </div>
 
@@ -155,10 +155,10 @@ export const DashboardView: React.FC = () => {
                 sound.playClick();
                 navigateTo('balance');
               }}
-              className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#1C1F26] hover:bg-[#252932] border border-[#30343B] hover:border-[#D5B477]/50 text-[#F4F1EA] flex items-center space-x-1.5 transition-all cursor-pointer"
+              className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#20232A] hover:bg-[#282C35] border border-[#30343C] hover:border-[#E6C17D]/50 text-[#F5F3EF] flex items-center space-x-1.5 transition-all cursor-pointer min-h-[44px]"
             >
               <span>Balance Details</span>
-              <ArrowUpRight className="w-3.5 h-3.5 text-[#D5B477]" />
+              <ArrowUpRight className="w-3.5 h-3.5 text-[#E6C17D]" />
             </button>
           </div>
 
@@ -170,17 +170,17 @@ export const DashboardView: React.FC = () => {
                 sound.playClick();
                 navigateTo('budget');
               }}
-              className="p-3 sm:p-3.5 rounded-2xl bg-[#101216]/90 border border-[#2D313B]/80 hover:border-[#D5B477]/40 transition-all cursor-pointer group flex flex-col justify-between"
+              className="p-3 sm:p-3.5 rounded-2xl bg-[#15171C]/90 border border-[#30343C]/80 hover:border-[#E6C17D]/40 transition-all cursor-pointer group flex flex-col justify-between"
             >
-              <div className="flex items-center justify-between text-[#8E929C] mb-1.5">
-                <span className="text-[10px] sm:text-[11px] font-medium leading-tight">Cash & Savings</span>
-                <Wallet className="w-3.5 h-3.5 text-[#D5B477] shrink-0" />
+              <div className="flex items-center justify-between text-[#A6AFBD] mb-1.5">
+                <span className="text-[10px] sm:text-[11px] font-medium leading-tight truncate">Cash & Savings</span>
+                <Wallet className="w-3.5 h-3.5 text-[#E6C17D] shrink-0" />
               </div>
               <div>
-                <div className="font-display font-bold text-xs sm:text-sm text-[#F4F1EA] tracking-tight">
+                <div className="font-display font-bold text-xs sm:text-sm text-[#F5F3EF] tracking-tight truncate">
                   {formatINR(accountAllocations.cash)}
                 </div>
-                <div className="text-[10px] font-mono text-[#D5B477] mt-0.5">
+                <div className="text-[10px] font-mono text-[#E6C17D] mt-0.5">
                   {cashPct}%
                 </div>
               </div>
@@ -192,17 +192,17 @@ export const DashboardView: React.FC = () => {
                 sound.playClick();
                 navigateTo('portfolio');
               }}
-              className="p-3 sm:p-3.5 rounded-2xl bg-[#101216]/90 border border-[#2D313B]/80 hover:border-[#8BC6A1]/40 transition-all cursor-pointer group flex flex-col justify-between"
+              className="p-3 sm:p-3.5 rounded-2xl bg-[#15171C]/90 border border-[#30343C]/80 hover:border-[#80C9A0]/40 transition-all cursor-pointer group flex flex-col justify-between"
             >
-              <div className="flex items-center justify-between text-[#8E929C] mb-1.5">
-                <span className="text-[10px] sm:text-[11px] font-medium leading-tight">Investments</span>
-                <TrendingUp className="w-3.5 h-3.5 text-[#8BC6A1] shrink-0" />
+              <div className="flex items-center justify-between text-[#A6AFBD] mb-1.5">
+                <span className="text-[10px] sm:text-[11px] font-medium leading-tight truncate">Investments</span>
+                <TrendingUp className="w-3.5 h-3.5 text-[#80C9A0] shrink-0" />
               </div>
               <div>
-                <div className="font-display font-bold text-xs sm:text-sm text-[#F4F1EA] tracking-tight">
+                <div className="font-display font-bold text-xs sm:text-sm text-[#F5F3EF] tracking-tight truncate">
                   {formatINR(accountAllocations.investments)}
                 </div>
-                <div className="text-[10px] font-mono text-[#8BC6A1] mt-0.5">
+                <div className="text-[10px] font-mono text-[#80C9A0] mt-0.5">
                   {invPct}%
                 </div>
               </div>
@@ -214,17 +214,17 @@ export const DashboardView: React.FC = () => {
                 sound.playClick();
                 navigateTo('moneyflow');
               }}
-              className="p-3 sm:p-3.5 rounded-2xl bg-[#101216]/90 border border-[#2D313B]/80 hover:border-[#A9B8C8]/40 transition-all cursor-pointer group flex flex-col justify-between"
+              className="p-3 sm:p-3.5 rounded-2xl bg-[#15171C]/90 border border-[#30343C]/80 hover:border-[#A6AFBD]/40 transition-all cursor-pointer group flex flex-col justify-between"
             >
-              <div className="flex items-center justify-between text-[#8E929C] mb-1.5">
-                <span className="text-[10px] sm:text-[11px] font-medium leading-tight">Emergency Buffer</span>
-                <Shield className="w-3.5 h-3.5 text-[#A9B8C8] shrink-0" />
+              <div className="flex items-center justify-between text-[#A6AFBD] mb-1.5">
+                <span className="text-[10px] sm:text-[11px] font-medium leading-tight truncate">Emergency Buffer</span>
+                <Shield className="w-3.5 h-3.5 text-[#A6AFBD] shrink-0" />
               </div>
               <div>
-                <div className="font-display font-bold text-xs sm:text-sm text-[#F4F1EA] tracking-tight">
+                <div className="font-display font-bold text-xs sm:text-sm text-[#F5F3EF] tracking-tight truncate">
                   {formatINR(accountAllocations.reserve)}
                 </div>
-                <div className="text-[10px] font-mono text-[#A9B8C8] mt-0.5">
+                <div className="text-[10px] font-mono text-[#A6AFBD] mt-0.5">
                   {reservePct}%
                 </div>
               </div>
@@ -273,9 +273,9 @@ export const DashboardView: React.FC = () => {
             <defs>
               {/* Golden Mountain Area Gradient */}
               <linearGradient id="goldMountainGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#D5B477" stopOpacity="0.22" />
-                <stop offset="60%" stopColor="#D5B477" stopOpacity="0.05" />
-                <stop offset="100%" stopColor="#D5B477" stopOpacity="0.0" />
+                <stop offset="0%" stopColor="#E6C17D" stopOpacity="0.22" />
+                <stop offset="60%" stopColor="#E6C17D" stopOpacity="0.05" />
+                <stop offset="100%" stopColor="#E6C17D" stopOpacity="0.0" />
               </linearGradient>
 
               {/* Glowing Line Shadow Filter */}
@@ -312,7 +312,7 @@ export const DashboardView: React.FC = () => {
             <path
               d={curvePath}
               fill="none"
-              stroke="#D5B477"
+              stroke="#E6C17D"
               strokeWidth="2.2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -338,8 +338,8 @@ export const DashboardView: React.FC = () => {
                   {/* Visual Node */}
                   {isSelected && (
                     <>
-                      <circle cx={p.x} cy={p.y} r="7" fill="#D5B477" opacity="0.3" className="animate-ping" />
-                      <circle cx={p.x} cy={p.y} r="4.5" fill="#D5B477" stroke="#12141A" strokeWidth="2" />
+                      <circle cx={p.x} cy={p.y} r="7" fill="#E6C17D" opacity="0.3" className="animate-ping" />
+                      <circle cx={p.x} cy={p.y} r="4.5" fill="#E6C17D" stroke="#12141A" strokeWidth="2" />
                     </>
                   )}
                 </g>
@@ -356,11 +356,11 @@ export const DashboardView: React.FC = () => {
                 top: `${(activePoint.y / chartHeight) * 100 - 32}%`
               }}
             >
-              <div className="px-2.5 py-1 rounded-xl bg-[#12141A]/95 border border-[#D5B477]/60 shadow-[0_4px_16px_rgba(0,0,0,0.8)] backdrop-blur-md flex items-center space-x-1 text-center">
-                <span className="font-mono text-[11px] font-bold text-[#F4F1EA]">
+              <div className="px-2.5 py-1 rounded-xl bg-[#15171C]/95 border border-[#E6C17D]/60 shadow-[0_4px_16px_rgba(0,0,0,0.8)] backdrop-blur-md flex items-center space-x-1 text-center">
+                <span className="font-mono text-[11px] font-bold text-[#F5F3EF]">
                   {formatINR(activePoint.data.value)}
                 </span>
-                <span className="font-mono text-[10px] text-[#8BC6A1] font-semibold">
+                <span className="font-mono text-[10px] text-[#80C9A0] font-semibold">
                   {activePoint.data.returnPct}
                 </span>
               </div>
@@ -368,7 +368,7 @@ export const DashboardView: React.FC = () => {
           )}
 
           {/* Month Labels along X-Axis */}
-          <div className="flex items-center justify-between px-2 pt-1 text-[10px] font-mono text-[#8E929C]">
+          <div className="flex items-center justify-between px-2 pt-1 text-[10px] font-mono text-[#A6AFBD]">
             {monthlyData.map((d, idx) => (
               <button
                 key={d.month}
@@ -376,8 +376,8 @@ export const DashboardView: React.FC = () => {
                   sound.playClick();
                   setSelectedMonthIndex(idx);
                 }}
-                className={`transition-colors cursor-pointer ${
-                  selectedMonthIndex === idx ? 'text-[#D5B477] font-bold' : 'hover:text-[#F4F1EA]'
+                className={`transition-colors cursor-pointer py-1 ${
+                  selectedMonthIndex === idx ? 'text-[#E6C17D] font-bold' : 'hover:text-[#F5F3EF]'
                 }`}
               >
                 {d.month}
@@ -393,38 +393,38 @@ export const DashboardView: React.FC = () => {
           sound.playClick();
           navigateTo('budget');
         }}
-        className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#1A1D24] to-[#12141A] border border-[#2D313B] hover:border-[#D5B477]/50 shadow-md transition-all cursor-pointer flex items-center justify-between group active:scale-[0.99]"
+        className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#20232A] to-[#15171C] border border-[#30343C] hover:border-[#E6C17D]/50 shadow-md transition-all cursor-pointer flex items-center justify-between group active:scale-[0.99]"
       >
         <div className="flex items-center space-x-3 truncate">
           {/* Bullseye Icon */}
-          <div className="w-9 h-9 rounded-full bg-[#20242E] border border-[#30343B] flex items-center justify-center text-[#D5B477] shrink-0 shadow-inner">
+          <div className="w-9 h-9 rounded-full bg-[#20232A] border border-[#30343C] flex items-center justify-center text-[#E6C17D] shrink-0 shadow-inner">
             <Target className="w-4 h-4 stroke-[2.2]" />
           </div>
 
           <div className="truncate">
-            <h3 className="font-display font-bold text-xs sm:text-sm text-[#F4F1EA] tracking-tight">
+            <h3 className="font-display font-bold text-xs sm:text-sm text-[#F5F3EF] tracking-tight">
               You're 12% closer to your goal
             </h3>
-            <p className="text-[10px] sm:text-[11px] text-[#8E929C] truncate mt-0.5">
+            <p className="text-[10px] sm:text-[11px] text-[#A6AFBD] truncate mt-0.5">
               Keep your monthly contribution going.
             </p>
           </div>
         </div>
 
-        <ChevronRight className="w-4 h-4 text-[#6A707E] group-hover:text-[#D5B477] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+        <ChevronRight className="w-4 h-4 text-[#6A707E] group-hover:text-[#E6C17D] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
       </div>
 
       {/* 6. SIGNATURE STRESS TEST: REHEARSE A BAD YEAR */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#20242B] via-[#1C1819] to-[#251817] border border-[#E27D78]/30 shadow-card-depth flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#20232A] via-[#1C1819] to-[#251817] border border-[#E27D78]/30 shadow-card-depth flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-full bg-[#E27D78]/15 border border-[#E27D78]/30 text-[9px] font-mono text-[#E27D78]">
             <ShieldAlert className="w-3 h-3" />
             <span>SIGNATURE STRESS TEST</span>
           </div>
-          <h4 className="font-display text-sm font-bold text-[#F4F1EA]">
+          <h4 className="font-display text-sm font-bold text-[#F5F3EF]">
             Rehearse a Bad Year Shock
           </h4>
-          <p className="text-xs text-[#A2A5AC] leading-relaxed max-w-md">
+          <p className="text-xs text-[#A6AFBD] leading-relaxed max-w-md">
             Simulate a 10%, 20%, or 30% correction before investing real money. See why continuing your monthly SIP during downturns accelerates wealth recovery.
           </p>
         </div>
@@ -433,7 +433,7 @@ export const DashboardView: React.FC = () => {
             sound.playClick();
             navigateTo('bad_year');
           }}
-          className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#E27D78] hover:bg-[#E88C88] text-[#090A0C] transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer shadow-sm active:scale-95"
+          className="px-4 py-2 min-h-[44px] rounded-xl text-xs font-semibold bg-[#E27D78] hover:bg-[#E88C88] text-[#08090B] transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer shadow-sm active:scale-95"
         >
           <span>Stress Test</span>
           <ArrowRight className="w-3.5 h-3.5" />
@@ -447,14 +447,14 @@ export const DashboardView: React.FC = () => {
             sound.playClick();
             navigateTo('explorer');
           }}
-          className="p-3.5 rounded-2xl bg-[#101216]/90 border border-[#2D313B]/80 hover:border-[#A9B8C8]/50 cursor-pointer transition-all group"
+          className="p-3.5 rounded-2xl bg-[#15171C]/90 border border-[#30343C]/80 hover:border-[#A9B8C8]/50 cursor-pointer transition-all group"
         >
           <div className="flex items-center justify-between mb-1.5">
             <Compass className="w-4 h-4 text-[#A9B8C8] group-hover:rotate-45 transition-transform" />
-            <ArrowRight className="w-3 h-3 text-[#A2A5AC] group-hover:translate-x-1 group-hover:text-[#F4F1EA] transition-all" />
+            <ArrowRight className="w-3 h-3 text-[#A6AFBD] group-hover:translate-x-1 group-hover:text-[#F5F3EF] transition-all" />
           </div>
-          <h5 className="text-xs font-bold text-[#F4F1EA]">6 Asset Classes</h5>
-          <p className="text-[10px] text-[#A2A5AC] mt-0.5 leading-snug">
+          <h5 className="text-xs font-bold text-[#F5F3EF]">6 Asset Classes</h5>
+          <p className="text-[10px] text-[#A6AFBD] mt-0.5 leading-snug">
             Index Funds, FDs, Gold, Bonds in plain English.
           </p>
         </div>
@@ -464,14 +464,14 @@ export const DashboardView: React.FC = () => {
             sound.playClick();
             navigateTo('simulator');
           }}
-          className="p-3.5 rounded-2xl bg-[#101216]/90 border border-[#2D313B]/80 hover:border-[#D5B477]/50 cursor-pointer transition-all group"
+          className="p-3.5 rounded-2xl bg-[#15171C]/90 border border-[#30343C]/80 hover:border-[#E6C17D]/50 cursor-pointer transition-all group"
         >
           <div className="flex items-center justify-between mb-1.5">
-            <TrendingUp className="w-4 h-4 text-[#D5B477] group-hover:scale-110 transition-transform" />
-            <ArrowRight className="w-3 h-3 text-[#A2A5AC] group-hover:translate-x-1 group-hover:text-[#F4F1EA] transition-all" />
+            <TrendingUp className="w-4 h-4 text-[#E6C17D] group-hover:scale-110 transition-transform" />
+            <ArrowRight className="w-3 h-3 text-[#A6AFBD] group-hover:translate-x-1 group-hover:text-[#F5F3EF] transition-all" />
           </div>
-          <h5 className="text-xs font-bold text-[#F4F1EA]">Goal Simulator</h5>
-          <p className="text-[10px] text-[#A2A5AC] mt-0.5 leading-snug">
+          <h5 className="text-xs font-bold text-[#F5F3EF]">Goal Simulator</h5>
+          <p className="text-[10px] text-[#A6AFBD] mt-0.5 leading-snug">
             Simulate stepping up to ₹1,500/mo SIP.
           </p>
         </div>
@@ -481,14 +481,14 @@ export const DashboardView: React.FC = () => {
             sound.playClick();
             navigateTo('learning');
           }}
-          className="p-3.5 rounded-2xl bg-[#101216]/90 border border-[#2D313B]/80 hover:border-[#8BC6A1]/50 cursor-pointer transition-all group"
+          className="p-3.5 rounded-2xl bg-[#15171C]/90 border border-[#30343C]/80 hover:border-[#80C9A0]/50 cursor-pointer transition-all group"
         >
           <div className="flex items-center justify-between mb-1.5">
-            <BookOpen className="w-4 h-4 text-[#8BC6A1] group-hover:scale-110 transition-transform" />
-            <ArrowRight className="w-3 h-3 text-[#A2A5AC] group-hover:translate-x-1 group-hover:text-[#F4F1EA] transition-all" />
+            <BookOpen className="w-4 h-4 text-[#80C9A0] group-hover:scale-110 transition-transform" />
+            <ArrowRight className="w-3 h-3 text-[#A6AFBD] group-hover:translate-x-1 group-hover:text-[#F5F3EF] transition-all" />
           </div>
-          <h5 className="text-xs font-bold text-[#F4F1EA]">Learning Hub</h5>
-          <p className="text-[10px] text-[#A2A5AC] mt-0.5 leading-snug">
+          <h5 className="text-xs font-bold text-[#F5F3EF]">Learning Hub</h5>
+          <p className="text-[10px] text-[#A6AFBD] mt-0.5 leading-snug">
             10 interactive student guides & lessons.
           </p>
         </div>

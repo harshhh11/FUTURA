@@ -124,16 +124,31 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
           className="flex items-center justify-between w-full pt-1.5 pb-1 md:hidden"
           style={{ paddingTop: 'max(0.5rem, env(safe-area-inset-top, 0px))' }}
         >
-          {/* Top Left: Circular Profile Portrait + "Hello, Aarav!" */}
-          <div className="flex items-center space-x-2.5">
-            <div className="w-9 h-9 rounded-full p-[1.5px] bg-gradient-to-tr from-[#DDBA78] via-[#C2CAD4] to-[#757E8C] shadow-sm shrink-0">
-              <div className="w-full h-full rounded-full overflow-hidden bg-[#12141A] flex items-center justify-center font-bold text-xs text-[#DDBA78]">
-                <span>{userProfile?.name ? userProfile.name.charAt(0) : 'A'}</span>
+          {/* Top Left: Circular Profile Portrait + "Hello, Aarav!" -> Click to return to landing page */}
+          <div 
+            onClick={() => {
+              sound.playClick();
+              navigateTo('landing');
+            }}
+            className="flex items-center space-x-2.5 cursor-pointer group active:scale-95 transition-all"
+            title="Return to Landing Page"
+            role="button"
+            tabIndex={0}
+            aria-label="Return to Landing Page"
+          >
+            <div className="relative">
+              <div className="w-9 h-9 rounded-full p-[1.5px] bg-gradient-to-tr from-[#DDBA78] via-[#C2CAD4] to-[#757E8C] shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+                <div className="w-full h-full rounded-full overflow-hidden bg-[#12141A] flex items-center justify-center font-bold text-xs text-[#DDBA78]">
+                  <span>{userProfile?.name ? userProfile.name.charAt(0) : 'A'}</span>
+                </div>
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-[#111317] border border-[#DDBA78]/60 flex items-center justify-center shadow-xs">
+                <span className="text-[8px] font-bold text-[#DDBA78]">F</span>
               </div>
             </div>
             <div className="leading-tight">
-              <span className="text-[#8E929C] text-sm font-normal">Hello, </span>
-              <span className="text-white text-sm font-bold tracking-tight">
+              <span className="text-[#8E929C] text-xs font-normal block -mb-0.5">Hello,</span>
+              <span className="text-white text-sm font-bold tracking-tight group-hover:text-[#DDBA78] transition-colors">
                 {userProfile?.name ? userProfile.name.split(' ')[0] : 'Aarav'}!
               </span>
             </div>
