@@ -11,7 +11,12 @@ import {
   ShieldCheck, 
   ChevronRight as ChevronRightSmall,
   Layers,
-  Sparkles
+  Sparkles,
+  Maximize2,
+  Minimize2,
+  Smartphone,
+  Share2,
+  PlusSquare
 } from 'lucide-react';
 
 interface CardHeroProps {
@@ -32,7 +37,28 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [currencyMode, setCurrencyMode] = useState<'INR' | 'USD'>('INR');
   const [mouseTilt, setMouseTilt] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [showPwaModal, setShowPwaModal] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleToggleFullscreen = () => {
+    sound.playClick();
+    if (!document.fullscreenElement) {
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen()
+          .then(() => setIsFullscreen(true))
+          .catch(() => setShowPwaModal(true));
+      } else {
+        setShowPwaModal(true);
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen()
+          .then(() => setIsFullscreen(false))
+          .catch(() => {});
+      }
+    }
+  };
 
   // Parallax tracking for realistic 3D depth
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -116,8 +142,8 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
       <div className="absolute top-0 right-1/4 w-[600px] h-[520px] bg-gradient-to-b from-white/[0.05] via-white/[0.015] to-transparent blur-3xl pointer-events-none rounded-full" />
       <div className="absolute top-1/3 left-1/3 w-[450px] h-[450px] bg-white/[0.02] blur-3xl pointer-events-none rounded-full" />
 
-      {/* SMARTPHONE-PROPORTIONED CANVAS (Centered on Pure Black Full Viewport on mobile, generous container on desktop) */}
-      <div className="w-full max-w-[420px] sm:max-w-[440px] lg:max-w-[480px] xl:max-w-[500px] flex flex-col justify-between px-3 sm:px-4 lg:px-2 pt-1 pb-4 relative z-10">
+      {/* SMARTPHONE-PROPORTIONED CANVAS (True Edge-to-Edge Full Viewport on mobile, generous container on desktop) */}
+      <div className="w-full max-w-full lg:max-w-[480px] xl:max-w-[500px] flex flex-col justify-between px-3.5 sm:px-6 lg:px-2 pt-1 pb-2 relative z-10">
 
         {/* 1. TOP HEADER BAR (Mobile Only) */}
         <header 
@@ -154,8 +180,18 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
             </div>
           </div>
 
-          {/* Top Right: Notification Bell with Gold Dot + 2x2 App Grid Button */}
-          <div className="flex items-center space-x-2.5">
+          {/* Top Right: Fullscreen Toggle + Notification Bell with Gold Dot + 2x2 App Grid Button */}
+          <div className="flex items-center space-x-2">
+            {/* Full-Screen App Mode / PWA Guide Button */}
+            <button 
+              onClick={handleToggleFullscreen}
+              className="w-8 h-8 rounded-full bg-[#1C1F26] border border-white/10 flex items-center justify-center text-[#E6C17D] hover:text-white hover:bg-[#282D37] hover:border-[#E6C17D]/40 active:scale-95 transition-all shadow-sm group cursor-pointer"
+              title={isFullscreen ? "Exit Fullscreen" : "Full-Screen Mobile App"}
+              aria-label="Full-screen mobile app mode"
+            >
+              {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+            </button>
+
             {/* Notification Icon */}
             <button 
               onClick={() => sound.playClick()}
@@ -221,11 +257,11 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
         </div>
 
         {/* 3. CENTER STAGE: DRAMATIC ASYMMETRIC 3D METALLIC CARD SUSPENDED OVER PEDESTAL */}
-        <div className="relative w-full my-auto py-2 lg:py-4 flex flex-col items-center justify-center min-h-[380px] sm:min-h-[410px] lg:min-h-[440px] xl:min-h-[460px]">
+        <div className="relative w-full my-auto py-1 sm:py-2 lg:py-4 flex flex-col items-center justify-center min-h-[310px] sm:min-h-[370px] lg:min-h-[440px] xl:min-h-[460px]">
           
           {/* FLOATING SUPPORTING FINANCIAL DETAILS (FUTURA Instruments, positioned in negative space) */}
           {/* Upper Right Metric: [+12.4%] [Nifty 50 SIP from user profile] */}
-          <div className="absolute right-0 lg:right-2 top-3 lg:top-1 z-30 flex items-center space-x-1.5 pointer-events-none">
+          <div className="absolute right-0 lg:right-2 top-2 lg:top-1 z-30 flex items-center space-x-1.5 pointer-events-none">
             <span className="px-2 py-0.5 rounded-full bg-[#181B22] border border-[#8BC6A1]/30 text-[#8BC6A1] text-[10px] font-mono font-medium shadow-sm">
               +12.4%
             </span>
@@ -236,7 +272,7 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
           </div>
 
           {/* Lower Left Metric: [Gold ETF] [+8.2%] */}
-          <div className="absolute left-0 lg:left-2 bottom-16 lg:bottom-20 z-30 flex items-center space-x-1.5 pointer-events-none">
+          <div className="absolute left-0 lg:left-2 bottom-12 lg:bottom-20 z-30 flex items-center space-x-1.5 pointer-events-none">
             <div className="text-left leading-none">
               <span className="block text-[10px] text-[#8E929C] -mb-0.5">Gold ETF</span>
               <span className="text-xs sm:text-sm font-semibold text-white font-mono tracking-tight">{formatINR(Math.round(monthlySip * 0.2))}</span>
@@ -249,7 +285,7 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
           {/* Left Navigation Chevron Button (<) */}
           <button
             onClick={() => cycleCard('prev')}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-40 w-10 h-10 rounded-full bg-[#13151A]/85 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-[#1E222A] hover:border-white/25 active:scale-95 transition-all shadow-lg"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#13151A]/85 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-[#1E222A] hover:border-white/25 active:scale-95 transition-all shadow-lg"
             title="Previous Card Finish"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -258,7 +294,7 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
           {/* Right Navigation Chevron Button (>) */}
           <button
             onClick={() => cycleCard('next')}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-40 w-10 h-10 rounded-full bg-[#13151A]/85 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-[#1E222A] hover:border-white/25 active:scale-95 transition-all shadow-lg"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#13151A]/85 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-[#1E222A] hover:border-white/25 active:scale-95 transition-all shadow-lg"
             title="Next Card Finish"
           >
             <ChevronRight className="w-4 h-4" />
@@ -266,7 +302,7 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
 
           {/* 3D PERSPECTIVE SCENE CONTAINER */}
           <div 
-            className="relative w-[300px] h-[370px] flex items-center justify-center"
+            className="relative w-[280px] sm:w-[300px] h-[310px] sm:h-[370px] flex items-center justify-center"
             style={{
               perspective: '1200px',
               transform: `rotateX(${-mouseTilt.y * 0.4}deg) rotateY(${mouseTilt.x * 0.4}deg)`,
@@ -289,7 +325,7 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
             >
               {/* Card Chassis: Vertical Card with Sharp Diagonal Reflection Seam */}
               <div 
-                className={`w-[215px] sm:w-[228px] h-[335px] sm:h-[355px] rounded-[18px] p-5 relative overflow-hidden transition-all duration-500`}
+                className={`w-[195px] sm:w-[228px] h-[300px] sm:h-[355px] rounded-[18px] p-4 sm:p-5 relative overflow-hidden transition-all duration-500`}
                 style={{
                   background: activeFinish === 'silver'
                     ? 'linear-gradient(134deg, #F0F4F8 0%, #D4DDE8 32%, #A8B4C2 41%, #14171E 42%, #0A0C10 70%, #050608 100%)'
@@ -648,6 +684,79 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
         </div>
 
       </div>
+
+      {/* FULL-SCREEN MOBILE APP GUIDE MODAL (For iOS Safari & Home Screen Installation) */}
+      {showPwaModal && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fadeIn"
+          onClick={() => setShowPwaModal(false)}
+        >
+          <div 
+            className="w-full max-w-md bg-[#12141A] border-t sm:border border-[#30343C] rounded-t-[32px] sm:rounded-2xl p-6 shadow-2xl space-y-5 animate-slideUp text-left"
+            onClick={(e) => e.stopPropagation()}
+            style={{ paddingBottom: 'max(1.75rem, env(safe-area-inset-bottom, 0px))' }}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#20232A] to-[#15171C] border border-[#E6C17D]/40 flex items-center justify-center">
+                  <Smartphone className="w-5 h-5 text-[#E6C17D]" />
+                </div>
+                <div>
+                  <h3 className="font-display font-bold text-base text-[#F5F3EF]">
+                    True Full-Screen App
+                  </h3>
+                  <p className="text-xs text-[#A6AFBD]">
+                    Enjoy FUTURA without browser bars
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowPwaModal(false)}
+                className="w-8 h-8 rounded-full bg-[#20232A] text-[#A6AFBD] hover:text-white flex items-center justify-center cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 bg-[#191C23] p-4 rounded-xl border border-[#30343C]/60 text-xs text-[#CAD2DC]">
+              <div className="flex items-start space-x-3">
+                <span className="w-5 h-5 rounded-full bg-[#E6C17D]/15 text-[#E6C17D] flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">1</span>
+                <span>In Safari, tap the <strong>Share</strong> button <Share2 className="inline w-3.5 h-3.5 text-[#E6C17D] -mt-0.5" /> at the bottom toolbar.</span>
+              </div>
+              <div className="flex items-start space-x-3">
+                <span className="w-5 h-5 rounded-full bg-[#E6C17D]/15 text-[#E6C17D] flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">2</span>
+                <span>Scroll down and select <strong>'Add to Home Screen'</strong> <PlusSquare className="inline w-3.5 h-3.5 text-[#E6C17D] -mt-0.5" />.</span>
+              </div>
+              <div className="flex items-start space-x-3">
+                <span className="w-5 h-5 rounded-full bg-[#E6C17D]/15 text-[#E6C17D] flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">3</span>
+                <span>Open <strong>FUTURA</strong> from your phone's Home Screen — it will launch in pure full-screen mode like a native iOS app!</span>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-3 pt-1">
+              <button
+                onClick={() => {
+                  sound.playClick();
+                  window.scrollTo({ top: 1, behavior: 'smooth' });
+                  setShowPwaModal(false);
+                }}
+                className="flex-1 py-3 px-4 rounded-xl font-semibold text-xs bg-[#20232A] hover:bg-[#282C35] border border-[#30343C] text-[#F5F3EF] transition-all cursor-pointer text-center"
+              >
+                Collapse URL Bar
+              </button>
+              <button
+                onClick={() => {
+                  sound.playClick();
+                  setShowPwaModal(false);
+                }}
+                className="flex-1 py-3 px-4 rounded-xl font-bold text-xs bg-[#E6C17D] text-[#08090B] hover:bg-[#F0D399] transition-all cursor-pointer text-center shadow-md"
+              >
+                Got It
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

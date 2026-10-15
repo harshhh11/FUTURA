@@ -96,7 +96,7 @@ const MainRouter: React.FC = () => {
         </div>
 
         {/* Main App Workspace */}
-        <main className={`flex-1 p-3 sm:p-5 lg:p-8 min-w-0 pb-28 md:pb-12 ${
+        <main className={`flex-1 px-0 sm:px-5 lg:px-8 py-0 sm:py-5 lg:py-8 min-w-0 pb-24 md:pb-12 w-full ${
           compactMode ? 'space-y-4' : 'space-y-6'
         }`}>
           {renderCurrentView()}

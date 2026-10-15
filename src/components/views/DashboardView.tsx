@@ -33,6 +33,7 @@ export const DashboardView: React.FC = () => {
   const [chartTimeframe, setChartTimeframe] = useState<'Monthly' | 'Quarterly' | 'Annual' | '1Y'>('Monthly');
   const [selectedMonthIndex, setSelectedMonthIndex] = useState<number>(6); // Default: Jul (last)
   const [isChartAnimated, setIsChartAnimated] = useState<boolean>(false);
+  const [mobileTab, setMobileTab] = useState<'card' | 'analytics'>('card');
 
   // Trigger chart entrance animation
   useEffect(() => {
@@ -107,18 +108,84 @@ export const DashboardView: React.FC = () => {
   const activePoint = points[selectedMonthIndex] || points[points.length - 1];
 
   return (
-    <div className="w-full space-y-6 animate-fadeIn pb-28 md:pb-12 text-[#F4F1EA] select-none">
+    <div className="w-full space-y-4 sm:space-y-6 animate-fadeIn pb-28 md:pb-12 text-[#F4F1EA] select-none">
       
-      {/* RESPONSIVE LAYOUT: 1-Column on Mobile, 2-Column on Desktop */}
+      {/* MOBILE SEGMENTED VIEW SWITCHER (Mobile Only - Quick switch between 3D Card and Financial Analytics) */}
+      <div className="lg:hidden flex items-center justify-center pt-1 pb-1 px-4">
+        <div className="inline-flex p-1 rounded-full bg-[#15171C]/90 border border-[#30343C]/80 backdrop-blur-md shadow-sm">
+          <button
+            onClick={() => {
+              sound.playClick();
+              setMobileTab('card');
+            }}
+            className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+              mobileTab === 'card'
+                ? 'bg-[#20232A] text-[#E6C17D] shadow-sm border border-[#E6C17D]/35'
+                : 'text-[#A6AFBD] hover:text-[#F5F3EF] border border-transparent'
+            }`}
+          >
+            3D Card View
+          </button>
+          <button
+            onClick={() => {
+              sound.playClick();
+              setMobileTab('analytics');
+            }}
+            className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+              mobileTab === 'analytics'
+                ? 'bg-[#20232A] text-[#E6C17D] shadow-sm border border-[#E6C17D]/35'
+                : 'text-[#A6AFBD] hover:text-[#F5F3EF] border border-transparent'
+            }`}
+          >
+            Financial Analytics
+          </button>
+        </div>
+      </div>
+
+      {/* RESPONSIVE LAYOUT: 1-Column on Mobile with View Switching, 2-Column on Desktop */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 xl:gap-10 items-start">
         
         {/* LEFT COLUMN: THE ICONIC 3D METALLIC CARD HERO + CAROUSEL + SMART ALLOCATIONS */}
-        <div className="lg:col-span-5 w-full flex justify-center">
+        <div className={`lg:col-span-5 w-full flex-col items-center justify-center ${
+          mobileTab === 'analytics' ? 'hidden lg:flex' : 'flex'
+        }`}>
           <FuturaCardHero />
+
+          {/* Quick jump to analytics on mobile */}
+          <div className="lg:hidden w-full px-4 pt-2 pb-1 text-center">
+            <button
+              onClick={() => {
+                sound.playClick();
+                setMobileTab('analytics');
+              }}
+              className="w-full py-2.5 px-4 rounded-xl text-xs font-medium bg-[#15171C]/90 hover:bg-[#1E222A] border border-[#30343C] text-[#A6AFBD] hover:text-[#E6C17D] transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
+            >
+              <span>View Total Wealth & Growth Analytics</span>
+              <ArrowRight className="w-3.5 h-3.5 text-[#E6C17D]" />
+            </button>
+          </div>
         </div>
 
         {/* RIGHT COLUMN: ANALYTICS, CATEGORY CARDS & GROWTH TRAJECTORY */}
-        <div className="lg:col-span-7 w-full space-y-4 sm:space-y-5 lg:space-y-6">
+        <div className={`lg:col-span-7 w-full space-y-4 sm:space-y-5 lg:space-y-6 px-3.5 sm:px-6 lg:px-0 ${
+          mobileTab === 'card' ? 'hidden lg:block' : 'block'
+        }`}>
+          
+          {/* Mobile Back to Card button (when viewing analytics on mobile) */}
+          <div className="lg:hidden pb-1 flex items-center justify-between">
+            <button
+              onClick={() => {
+                sound.playClick();
+                setMobileTab('card');
+              }}
+              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#15171C] border border-[#30343C] text-[#A6AFBD] hover:text-[#E6C17D] flex items-center space-x-1.5 transition-colors cursor-pointer"
+            >
+              <span>← Return to 3D Card</span>
+            </button>
+            <span className="text-[11px] font-mono text-[#E6C17D]">
+              Live Portfolio
+            </span>
+          </div>
           
           {/* Total Wealth Header */}
           <div className="p-4 sm:p-5 lg:p-6 rounded-2xl bg-[#15171C]/90 border border-[#30343C]/80 shadow-card-depth flex items-center justify-between">

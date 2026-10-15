@@ -73,7 +73,7 @@ export const BottomNav: React.FC<BottomNavProps> = () => {
         ========================================================================
       */}
       <div 
-        className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#07080A]/95 via-[#07080A]/80 to-transparent backdrop-blur-[8px] pointer-events-none"
+        className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#07080A]/95 via-[#07080A]/80 to-transparent backdrop-blur-[8px] pointer-events-none"
         aria-hidden="true"
       />
 
