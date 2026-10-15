@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { sound } from '../../utils/sound';
 import { formatINR } from '../../utils/calculations';
@@ -41,6 +41,20 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
   const [showPwaModal, setShowPwaModal] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Ensure mobile drawer is closed on desktop viewports (>= 1024px)
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsDrawerOpen(false);
+      }
+    };
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+      setIsDrawerOpen(false);
+    }
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleToggleFullscreen = () => {
     sound.playClick();
     if (!document.fullscreenElement) {
@@ -60,9 +74,12 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
     }
   };
 
-  // Parallax tracking for realistic 3D depth
+  // Parallax tracking for realistic 3D depth (desktop mouse only)
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (reducedMotion || !containerRef.current || isDrawerOpen) return;
+    if (typeof window !== 'undefined' && window.matchMedia && !window.matchMedia('(pointer: fine)').matches) {
+      return;
+    }
     const rect = containerRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left - rect.width / 2) / 32;
     const y = (e.clientY - rect.top - rect.height / 2) / 32;
@@ -257,11 +274,11 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
         </div>
 
         {/* 3. CENTER STAGE: DRAMATIC ASYMMETRIC 3D METALLIC CARD SUSPENDED OVER PEDESTAL */}
-        <div className="relative w-full my-auto py-1 sm:py-2 lg:py-4 flex flex-col items-center justify-center min-h-[310px] sm:min-h-[370px] lg:min-h-[440px] xl:min-h-[460px]">
+        <div className="relative w-full mt-4 sm:mt-2 mb-2 lg:my-auto pt-6 pb-3 sm:py-6 lg:py-4 flex flex-col items-center justify-center min-h-[360px] sm:min-h-[390px] lg:min-h-[440px]">
           
           {/* FLOATING SUPPORTING FINANCIAL DETAILS (FUTURA Instruments, positioned in negative space) */}
           {/* Upper Right Metric: [+12.4%] [Nifty 50 SIP from user profile] */}
-          <div className="absolute right-0 lg:right-2 top-2 lg:top-1 z-30 flex items-center space-x-1.5 pointer-events-none">
+          <div className="absolute right-0 lg:right-2 top-0 lg:top-1 z-30 flex items-center space-x-1.5 pointer-events-none">
             <span className="px-2 py-0.5 rounded-full bg-[#181B22] border border-[#8BC6A1]/30 text-[#8BC6A1] text-[10px] font-mono font-medium shadow-sm">
               +12.4%
             </span>
@@ -272,7 +289,7 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
           </div>
 
           {/* Lower Left Metric: [Gold ETF] [+8.2%] */}
-          <div className="absolute left-0 lg:left-2 bottom-12 lg:bottom-20 z-30 flex items-center space-x-1.5 pointer-events-none">
+          <div className="absolute left-0 lg:left-2 bottom-10 lg:bottom-20 z-30 flex items-center space-x-1.5 pointer-events-none">
             <div className="text-left leading-none">
               <span className="block text-[10px] text-[#8E929C] -mb-0.5">Gold ETF</span>
               <span className="text-xs sm:text-sm font-semibold text-white font-mono tracking-tight">{formatINR(Math.round(monthlySip * 0.2))}</span>
@@ -302,12 +319,13 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
 
           {/* 3D PERSPECTIVE SCENE CONTAINER */}
           <div 
-            className="relative w-[280px] sm:w-[300px] h-[310px] sm:h-[370px] flex items-center justify-center"
+            className="relative w-[280px] sm:w-[300px] h-[340px] sm:h-[370px] flex items-center justify-center"
             style={{
               perspective: '1200px',
               transform: `rotateX(${-mouseTilt.y * 0.4}deg) rotateY(${mouseTilt.x * 0.4}deg)`,
               transformStyle: 'preserve-3d',
-              transition: 'transform 0.4s ease-out'
+              transition: 'transform 0.4s ease-out',
+              willChange: 'transform'
             }}
           >
             {/* THE ASYMMETRIC 3D METALLIC SILVER CARD (Poised diagonally from upper-left to lower-right) */}
@@ -317,16 +335,22 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
               }`}
               style={{
                 transform: reducedMotion 
-                  ? 'translateY(-2px) rotateX(15deg) rotateY(-24deg) rotateZ(32deg)' 
+                  ? 'translate3d(0, -2px, 0) rotateX(16deg) rotateY(-23deg) rotateZ(32deg)' 
                   : undefined,
                 transformStyle: 'preserve-3d',
+                willChange: 'transform',
+                WebkitBackfaceVisibility: 'hidden',
+                backfaceVisibility: 'hidden'
               }}
               onClick={() => cycleCard('next')}
             >
               {/* Card Chassis: Vertical Card with Sharp Diagonal Reflection Seam */}
               <div 
-                className={`w-[195px] sm:w-[228px] h-[300px] sm:h-[355px] rounded-[18px] p-4 sm:p-5 relative overflow-hidden transition-all duration-500`}
+                className={`w-[195px] sm:w-[220px] h-[290px] sm:h-[345px] rounded-[18px] p-4 sm:p-5 relative overflow-hidden transition-all duration-500`}
                 style={{
+                  willChange: 'transform',
+                  WebkitBackfaceVisibility: 'hidden',
+                  backfaceVisibility: 'hidden',
                   background: activeFinish === 'silver'
                     ? 'linear-gradient(134deg, #F0F4F8 0%, #D4DDE8 32%, #A8B4C2 41%, #14171E 42%, #0A0C10 70%, #050608 100%)'
                     : activeFinish === 'gold'

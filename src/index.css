@@ -116,10 +116,10 @@
 /* Cinematic 3D Floating Card, Pedestal Light & Specular Highlight Animations */
 @keyframes luxuryCardFloating {
   0%, 100% {
-    transform: translateY(-8px) rotateX(15deg) rotateY(-24deg) rotateZ(31.5deg);
+    transform: translate3d(0, -5px, 0) rotateX(16deg) rotateY(-23deg) rotateZ(32deg);
   }
   50% {
-    transform: translateY(7px) rotateX(17.5deg) rotateY(-21.5deg) rotateZ(33.5deg);
+    transform: translate3d(0, 5px, 0) rotateX(16deg) rotateY(-23deg) rotateZ(32deg);
   }
 }
 
@@ -155,7 +155,11 @@
 }
 
 .animate-card-floating {
-  animation: luxuryCardFloating 7s ease-in-out infinite;
+  animation: luxuryCardFloating 6s ease-in-out infinite;
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
 }
 
 .animate-card-shimmer {
