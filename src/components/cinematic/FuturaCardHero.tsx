@@ -470,24 +470,35 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
           </div>
         </div>
 
-        {/* 4. BOTTOM DOCK & INTERACTIVE EXPANDED DRAWER (Images 2 & 3) */}
+        {/* Mobile-only backdrop when drawer is open */}
+        {isDrawerOpen && (
+          <div 
+            onClick={() => setIsDrawerOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 lg:hidden"
+            aria-hidden="true"
+          />
+        )}
+
+        {/* 4. BOTTOM DOCK & INTERACTIVE EXPANDED DRAWER (Mobile drawer, desktop inline card) */}
         <div 
           className={`w-full transition-all duration-500 ease-out z-50 ${
             isDrawerOpen 
-              ? 'fixed inset-x-0 bottom-0 max-w-[440px] mx-auto h-[70%] rounded-t-[36px] bg-[#0E1015]/98 border-t border-white/20 backdrop-blur-2xl shadow-2xl flex flex-col justify-between p-5'
+              ? 'fixed inset-x-0 bottom-0 max-w-[440px] mx-auto h-[70%] rounded-t-[36px] bg-[#0E1015]/98 border-t border-white/20 backdrop-blur-2xl shadow-2xl flex flex-col justify-between p-5 lg:relative lg:inset-auto lg:max-w-full lg:h-auto lg:rounded-2xl lg:bg-[#15171C]/90 lg:border lg:border-[#30343C]/80 lg:p-4 lg:shadow-card-depth lg:backdrop-blur-md lg:mt-5'
               : 'mt-2.5 lg:mt-5 rounded-2xl bg-[#0E1015]/90 lg:bg-[#15171C]/90 border border-white/10 lg:border-[#30343C]/80 pt-3 pb-3 px-4 lg:p-4 shadow-xl lg:shadow-card-depth backdrop-blur-md cursor-pointer'
           }`}
           style={isDrawerOpen ? { paddingBottom: 'max(2.5rem, env(safe-area-inset-bottom, 0px))' } : undefined}
           onClick={() => {
+            // ONLY open mobile drawer on mobile screens (< 1024px)!
+            if (typeof window !== 'undefined' && window.innerWidth >= 1024) return;
             if (!isDrawerOpen) {
               sound.playClick();
               setIsDrawerOpen(true);
             }
           }}
         >
-          {/* Top Close Notch Button (Image 3) */}
+          {/* Top Close Notch Button (Image 3) - Mobile only */}
           {isDrawerOpen && (
-            <div className="relative -mt-9 mb-2 flex items-center justify-center">
+            <div className="relative -mt-9 mb-2 flex items-center justify-center lg:hidden">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -576,9 +587,9 @@ export const FuturaCardHero: React.FC<CardHeroProps> = ({ onExplore }) => {
             })}
           </div>
 
-          {/* EXPANDED CONTENT (Shown only when Drawer is opened as in Image 3) */}
+          {/* EXPANDED CONTENT (Shown only on mobile when Drawer is opened as in Image 3) */}
           {isDrawerOpen && (
-            <div className="flex-1 overflow-y-auto space-y-4 pt-2 pb-1 animate-fadeIn">
+            <div className="flex-1 overflow-y-auto space-y-4 pt-2 pb-1 animate-fadeIn lg:hidden">
               {/* Overview Section with Habit Bars */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
