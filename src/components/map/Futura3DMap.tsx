@@ -229,40 +229,65 @@ export const Futura3DMap: React.FC<Futura3DMapProps> = ({
 
     mapRef.current = map;
 
+    const getMarkerHtml = (loc: LocationData) => `
+      <div style="position: relative; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -100%);">
+        <!-- Floating Landmark Info Callout matching reference image -->
+        <div style="
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          background: rgba(14, 16, 21, 0.94);
+          border: 1px solid rgba(255, 255, 255, 0.22);
+          backdrop-filter: blur(18px);
+          border-radius: 18px;
+          padding: 8px 14px;
+          margin-bottom: 10px;
+          box-shadow: 0 20px 45px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.08);
+          pointer-events: auto;
+          white-space: nowrap;
+        ">
+          <img src="${loc.thumbnail}" style="width: 46px; height: 46px; border-radius: 12px; object-fit: cover; border: 1px solid rgba(255, 255, 255, 0.25);" />
+          <div style="text-align: left;">
+            <div style="font-weight: 800; font-size: 15px; color: #FFFFFF; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.01em;">${loc.name}</div>
+            <div style="font-size: 11px; color: #A6AFBD; margin-top: 1px;">${loc.subtitle}</div>
+            <div style="font-size: 10px; color: #E6C17D; font-family: monospace; margin-top: 2px; font-weight: 600;">${loc.coordinates.formatted}</div>
+          </div>
+        </div>
+
+        <!-- Gold Teardrop Location Marker -->
+        <div style="
+          width: 30px; 
+          height: 30px; 
+          background: linear-gradient(135deg, #FFF4DC 0%, #E6C17D 50%, #C5A059 100%); 
+          border-radius: 50% 50% 50% 0; 
+          transform: rotate(-45deg); 
+          box-shadow: 0 0 24px rgba(230, 193, 125, 0.75), 0 8px 20px rgba(0, 0, 0, 0.95);
+          border: 2px solid #FFFFFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        ">
+          <div style="width: 9px; height: 9px; border-radius: 50%; background: #090A0C; transform: rotate(45deg);"></div>
+        </div>
+        <!-- Ground Glow Target Ring -->
+        <div style="
+          width: 16px; 
+          height: 6px; 
+          background: rgba(230, 193, 125, 0.55); 
+          border-radius: 50%; 
+          margin-top: -2px; 
+          box-shadow: 0 0 10px #E6C17D;
+        "></div>
+      </div>
+    `;
+
     map.on('load', () => {
       setMapLoaded(true);
 
-      // Create Custom 3D Gold Pin Marker
+      // Create Custom 3D Gold Pin Marker with Floating Info Callout
       const el = document.createElement('div');
       el.className = 'futura-map-marker-container cursor-pointer';
-      el.innerHTML = `
-        <div style="position: relative; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -100%);">
-          <!-- Pin Head with Golden Aura Glow -->
-          <div style="
-            width: 32px; 
-            height: 32px; 
-            background: linear-gradient(135deg, #FFF4DC 0%, #E6C17D 50%, #C5A059 100%); 
-            border-radius: 50% 50% 50% 0; 
-            transform: rotate(-45deg); 
-            box-shadow: 0 0 24px rgba(230, 193, 125, 0.7), 0 8px 16px rgba(0, 0, 0, 0.9);
-            border: 2px solid #FFFFFF;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          ">
-            <div style="width: 10px; height: 10px; border-radius: 50%; background: #090A0C; transform: rotate(45deg);"></div>
-          </div>
-          <!-- Ground Target Ring -->
-          <div style="
-            width: 16px; 
-            height: 6px; 
-            background: rgba(230, 193, 125, 0.45); 
-            border-radius: 50%; 
-            margin-top: -2px; 
-            box-shadow: 0 0 10px #E6C17D;
-          "></div>
-        </div>
-      `;
+      el.innerHTML = getMarkerHtml(selectedLocation);
 
       el.addEventListener('click', () => {
         sound.playClick();
@@ -309,6 +334,56 @@ export const Futura3DMap: React.FC<Futura3DMapProps> = ({
 
     if (markerRef.current) {
       markerRef.current.setLngLat([loc.coordinates.lng, loc.coordinates.lat]);
+      const markerEl = markerRef.current.getElement();
+      if (markerEl) {
+        markerEl.innerHTML = `
+          <div style="position: relative; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -100%);">
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              background: rgba(14, 16, 21, 0.94);
+              border: 1px solid rgba(255, 255, 255, 0.22);
+              backdrop-filter: blur(18px);
+              border-radius: 18px;
+              padding: 8px 14px;
+              margin-bottom: 10px;
+              box-shadow: 0 20px 45px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.08);
+              pointer-events: auto;
+              white-space: nowrap;
+            ">
+              <img src="${loc.thumbnail}" style="width: 46px; height: 46px; border-radius: 12px; object-fit: cover; border: 1px solid rgba(255, 255, 255, 0.25);" />
+              <div style="text-align: left;">
+                <div style="font-weight: 800; font-size: 15px; color: #FFFFFF; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.01em;">${loc.name}</div>
+                <div style="font-size: 11px; color: #A6AFBD; margin-top: 1px;">${loc.subtitle}</div>
+                <div style="font-size: 10px; color: #E6C17D; font-family: monospace; margin-top: 2px; font-weight: 600;">${loc.coordinates.formatted}</div>
+              </div>
+            </div>
+            <div style="
+              width: 30px; 
+              height: 30px; 
+              background: linear-gradient(135deg, #FFF4DC 0%, #E6C17D 50%, #C5A059 100%); 
+              border-radius: 50% 50% 50% 0; 
+              transform: rotate(-45deg); 
+              box-shadow: 0 0 24px rgba(230, 193, 125, 0.75), 0 8px 20px rgba(0, 0, 0, 0.95);
+              border: 2px solid #FFFFFF;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            ">
+              <div style="width: 9px; height: 9px; border-radius: 50%; background: #090A0C; transform: rotate(45deg);"></div>
+            </div>
+            <div style="
+              width: 16px; 
+              height: 6px; 
+              background: rgba(230, 193, 125, 0.55); 
+              border-radius: 50%; 
+              margin-top: -2px; 
+              box-shadow: 0 0 10px #E6C17D;
+            "></div>
+          </div>
+        `;
+      }
     }
   }, [styleMode, onSelectLocation]);
 
