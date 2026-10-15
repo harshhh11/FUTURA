@@ -29,6 +29,7 @@ export const INITIAL_PORTFOLIO_ALLOCATION: PortfolioAllocation[] = [
   { categoryId: 'savings', percentage: 0 },
   { categoryId: 'bonds', percentage: 0 },
   { categoryId: 'mutual_funds', percentage: 0 },
+  { categoryId: 'equities', percentage: 0 },
 ];
 
 export const INITIAL_ACTIVITIES: ActivityItem[] = [
